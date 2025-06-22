@@ -8,6 +8,7 @@ import AddProject from './AddProject';
 import ProjectList from './ProjectList';
 import ProfileOverview from './ProfileOverview';
 import { FiHome, FiPlusCircle, FiFileText, FiFolder, FiFolderPlus, FiLogOut, FiUser, FiAward } from 'react-icons/fi';
+import StudyPlanner from './StudyPlanner';
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -43,6 +44,8 @@ function Dashboard() {
         return <AddProject />;
       case 'projects':
         return <ProjectList />;
+        case 'studyplanner':
+        return <StudyPlanner />;
       default:
         return (
           <div className="flex flex-col items-center justify-center h-full">
@@ -103,6 +106,13 @@ function Dashboard() {
             <FiUser className="text-lg" />
             {!isSidebarCollapsed && <span className="ml-3">Profile</span>}
           </button>
+          <button
+              className={`w-full flex items-center ${activeSection === 'projects' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+              onClick={() => setActiveSection('studyplanner')}
+            >
+              <FiFolder className="text-lg" />
+              {!isSidebarCollapsed && <span className="ml-3">StudyPlanner</span>}
+            </button>
           <div className="pt-2">
             <p className={`text-xs font-semibold text-gray-500 uppercase ${isSidebarCollapsed ? 'hidden' : 'block'} mb-2`}>Certificates</p>
             <button
