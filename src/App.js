@@ -10,6 +10,8 @@ import AddProject from './components/AddProject';
 import ProjectList from './components/ProjectList';
 import CertificateList from './components/CertificateList';
 import StudyPlanner from './components/StudyPlanner';
+import NoteEditor from './components/NoteEditor';
+import NotesList from './components/NotesList';
 function App() {
   return (
     <Router>
@@ -23,6 +25,8 @@ function App() {
         <Route path="/projects" element={<ProjectList />} />
         <Route path="/certificates" element={<CertificateList />} />
         <Route path="/studyplanner" element={<StudyPlanner />} />
+        <Route path="/noteseditor" element={<NoteEditor />} />
+        <Route path="/noteslist" element={<NotesList />} />
       </Routes>
     </Router>
   );
