@@ -9,9 +9,12 @@ import ProfileOverview from './ProfileOverview';
 import StudyPlanner from './StudyPlanner';
 import NoteEditor from './NoteEditor';
 import NoteList from './NotesList';
+import QuestionPaperList from './QuestionPaperList';
+import QuizList from './QuizList';
 import { 
   FiHome, FiPlusCircle, FiFileText, FiFolder, FiFolderPlus, 
-  FiLogOut, FiUser, FiAward, FiMenu, FiX 
+  FiLogOut, FiUser, FiAward, FiMenu, FiX, FiBook, FiBookOpen,
+  FiExternalLink
 } from 'react-icons/fi';
 
 function Dashboard() {
@@ -21,6 +24,8 @@ function Dashboard() {
   const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
   const [isMobileSidebarOpen, setIsMobileSidebarOpen] = useState(false);
   const [windowWidth, setWindowWidth] = useState(window.innerWidth);
+  const [currentPdf, setCurrentPdf] = useState(null);
+  const [currentQuizLink, setCurrentQuizLink] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
@@ -52,9 +57,21 @@ function Dashboard() {
 
   const handleNavigation = (section) => {
     setActiveSection(section);
+    setCurrentPdf(null);
+    setCurrentQuizLink(null);
     if (windowWidth <= 1024) {
       setIsMobileSidebarOpen(false);
     }
+  };
+
+  const openPdf = (pdfUrl) => {
+    setCurrentPdf(pdfUrl);
+    setActiveSection('pdf-viewer');
+  };
+
+  const openQuiz = (quizUrl) => {
+    setCurrentQuizLink(quizUrl);
+    setActiveSection('quiz-viewer');
   };
 
   const renderContent = () => {
@@ -71,10 +88,66 @@ function Dashboard() {
         return <ProjectList />;
       case 'studyplanner':
         return <StudyPlanner />;
-        case 'noteseditor':
+      case 'noteseditor':
         return <NoteEditor />;
-        case 'noteslist':
+      case 'noteslist':
         return <NoteList />;
+      case 'question-papers':
+        return <QuestionPaperList openPdf={openPdf} />;
+      case 'quiz':
+        return <QuizList openQuiz={openQuiz} />;
+      case 'pdf-viewer':
+        return (
+          <div className="h-full flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <button 
+                onClick={() => handleNavigation('question-papers')}
+                className="flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <FiArrowLeft className="mr-1" /> Back to Question Papers
+              </button>
+              <a 
+                href={currentPdf} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center text-blue-600 hover:text-blue-800"
+              >
+                Open in new tab <FiExternalLink className="ml-1" />
+              </a>
+            </div>
+            <iframe 
+              src={`https://docs.google.com/viewer?url=${encodeURIComponent(currentPdf)}&embedded=true`}
+              className="flex-grow w-full border rounded-lg"
+              title="PDF Viewer"
+            />
+          </div>
+        );
+      case 'quiz-viewer':
+        return (
+          <div className="h-full flex flex-col">
+            <div className="flex justify-between items-center mb-4">
+              <button 
+                onClick={() => handleNavigation('quiz')}
+                className="flex items-center text-blue-600 hover:text-blue-800"
+              >
+                <FiArrowLeft className="mr-1" /> Back to Quizzes
+              </button>
+              <a 
+                href={currentQuizLink} 
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="flex items-center text-blue-600 hover:text-blue-800"
+              >
+                Open in new tab <FiExternalLink className="ml-1" />
+              </a>
+            </div>
+            <iframe 
+              src={currentQuizLink}
+              className="flex-grow w-full border rounded-lg"
+              title="Quiz Viewer"
+            />
+          </div>
+        );
       default:
         return (
           <div className="flex flex-col items-center justify-center h-full">
@@ -163,7 +236,8 @@ function Dashboard() {
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">My Projects</span>}
         </button>
       </div>
-       <div className="pt-2">
+      
+      <div className="pt-2">
         {(!isSidebarCollapsed || isMobile) && (
           <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Notes</p>
         )}
@@ -180,6 +254,26 @@ function Dashboard() {
         >
           <FiFolder className="text-lg" />
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Notes List</span>}
+        </button>
+      </div>
+      
+      <div className="pt-2">
+        {(!isSidebarCollapsed || isMobile) && (
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Study Materials</p>
+        )}
+        <button
+          className={`w-full flex items-center ${activeSection === 'question-papers' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          onClick={() => handleNavigation('question-papers')}
+        >
+          <FiBook className="text-lg" />
+          {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Question Papers</span>}
+        </button>
+        <button
+          className={`w-full flex items-center ${activeSection === 'quiz' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          onClick={() => handleNavigation('quiz')}
+        >
+          <FiBookOpen className="text-lg" />
+          {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Quiz</span>}
         </button>
       </div>
     </div>
@@ -205,6 +299,8 @@ function Dashboard() {
           {activeSection === 'studyplanner' && 'Study Planner'}
           {activeSection === 'noteseditor' && 'Notes maker'}
           {activeSection === 'noteslist' && 'Notes List'}
+          {activeSection === 'question-papers' && 'Question Papers'}
+          {activeSection === 'quiz' && 'Quiz'}
         </h1>
         <div className="flex items-center space-x-2">
           <button
@@ -277,6 +373,8 @@ function Dashboard() {
             {activeSection === 'studyplanner' && 'Study Planner'}
             {activeSection === 'noteseditor' && 'Notes maker'}
             {activeSection === 'noteslist' && 'Notes List'}
+            {activeSection === 'question-papers' && 'Question Papers'}
+            {activeSection === 'quiz' && 'Quiz'}
           </h1>
           
           <div className="flex items-center space-x-4">

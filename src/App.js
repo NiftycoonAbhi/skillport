@@ -12,6 +12,7 @@ import CertificateList from './components/CertificateList';
 import StudyPlanner from './components/StudyPlanner';
 import NoteEditor from './components/NoteEditor';
 import NotesList from './components/NotesList';
+import AdminDashboard from './pages/AdminDashboard';
 function App() {
   return (
     <Router>
@@ -27,6 +28,7 @@ function App() {
         <Route path="/studyplanner" element={<StudyPlanner />} />
         <Route path="/noteseditor" element={<NoteEditor />} />
         <Route path="/noteslist" element={<NotesList />} />
+        <Route path="/admin" element={<AdminDashboard />} />
       </Routes>
     </Router>
   );
