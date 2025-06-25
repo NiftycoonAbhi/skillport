@@ -14,8 +14,11 @@ import QuizList from './QuizList';
 import { 
   FiHome, FiPlusCircle, FiFileText, FiFolder, FiFolderPlus, 
   FiLogOut, FiUser, FiAward, FiMenu, FiX, FiBook, FiBookOpen,
-  FiExternalLink
+  FiExternalLink, FiCalendar, FiPieChart, FiSettings, FiMessageSquare,
+  FiTrendingUp, FiClipboard, FiLayers, FiClock, FiStar, FiHelpCircle
 } from 'react-icons/fi';
+import { FaGraduationCap, FaChalkboardTeacher } from 'react-icons/fa';
+import { BsLightningFill, BsJournalBookmark } from 'react-icons/bs';
 
 function Dashboard() {
   const navigate = useNavigate();
@@ -98,138 +101,200 @@ function Dashboard() {
         return <QuizList openQuiz={openQuiz} />;
       case 'pdf-viewer':
         return (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col bg-white rounded-xl shadow-sm p-4">
             <div className="flex justify-between items-center mb-4">
               <button 
                 onClick={() => handleNavigation('question-papers')}
-                className="flex items-center text-blue-600 hover:text-blue-800"
+                className="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 px-4 py-2 rounded-lg transition-all"
               >
-                <FiArrowLeft className="mr-1" /> Back to Question Papers
+                <FiArrowLeft className="mr-2" /> Back to Question Papers
               </button>
               <a 
                 href={currentPdf} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center text-blue-600 hover:text-blue-800"
+                className="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 px-4 py-2 rounded-lg transition-all"
               >
-                Open in new tab <FiExternalLink className="ml-1" />
+                Open in new tab <FiExternalLink className="ml-2" />
               </a>
             </div>
             <iframe 
               src={`https://docs.google.com/viewer?url=${encodeURIComponent(currentPdf)}&embedded=true`}
-              className="flex-grow w-full border rounded-lg"
+              className="flex-grow w-full border rounded-lg shadow-inner"
               title="PDF Viewer"
             />
           </div>
         );
       case 'quiz-viewer':
         return (
-          <div className="h-full flex flex-col">
+          <div className="h-full flex flex-col bg-white rounded-xl shadow-sm p-4">
             <div className="flex justify-between items-center mb-4">
               <button 
                 onClick={() => handleNavigation('quiz')}
-                className="flex items-center text-blue-600 hover:text-blue-800"
+                className="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 px-4 py-2 rounded-lg transition-all"
               >
-                <FiArrowLeft className="mr-1" /> Back to Quizzes
+                <FiArrowLeft className="mr-2" /> Back to Quizzes
               </button>
               <a 
                 href={currentQuizLink} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center text-blue-600 hover:text-blue-800"
+                className="flex items-center text-blue-600 hover:text-blue-800 bg-blue-50 px-4 py-2 rounded-lg transition-all"
               >
-                Open in new tab <FiExternalLink className="ml-1" />
+                Open in new tab <FiExternalLink className="ml-2" />
               </a>
             </div>
             <iframe 
               src={currentQuizLink}
-              className="flex-grow w-full border rounded-lg"
+              className="flex-grow w-full border rounded-lg shadow-inner"
               title="Quiz Viewer"
             />
           </div>
         );
       default:
         return (
-          <div className="flex flex-col items-center justify-center h-full">
-            <div className="text-center max-w-md px-4">
-              <FiHome className="mx-auto h-12 w-12 text-blue-500 mb-4" />
-              <h2 className="text-2xl font-bold text-gray-800 mb-2">Welcome to SkillPort</h2>
-              <p className="text-gray-600 mb-6">
-                Manage your professional portfolio with ease. Add certificates, showcase projects, 
-                and track your achievements all in one place.
-              </p>
-              <button 
-                onClick={() => handleNavigation('add-certificate')}
-                className="bg-blue-500 hover:bg-blue-600 text-white px-6 py-2 rounded-lg transition-all"
-              >
-                Get Started
-              </button>
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 p-4">
+            {/* Welcome Card */}
+            <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-2xl shadow-lg p-6 text-white col-span-1 md:col-span-2 lg:col-span-3">
+              <div className="flex flex-col md:flex-row items-center justify-between">
+                <div>
+                  <h2 className="text-2xl md:text-3xl font-bold mb-2">Welcome back, Student!</h2>
+                  <p className="text-blue-100 mb-4 md:mb-0">
+                    Ready to boost your learning today? Track your progress and achieve your goals.
+                  </p>
+                </div>
+                <button 
+                  onClick={() => handleNavigation('studyplanner')}
+                  className="bg-white text-blue-600 hover:bg-blue-50 px-6 py-3 rounded-xl font-semibold transition-all flex items-center"
+                >
+                  <FiCalendar className="mr-2" /> Plan Your Study
+                </button>
+              </div>
             </div>
+            {/* Quick Actions */}
+            <div className="bg-white rounded-2xl shadow-lg p-6">
+  <h3 className="text-xl font-semibold mb-6 flex items-center text-gray-800">
+    <BsLightningFill className="text-yellow-500 mr-3 animate-pulse" />
+    Quick Actions
+  </h3>
+
+  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+    {/* Add Certificate */}
+    <button
+      onClick={() => handleNavigation('add-certificate')}
+      className="group flex flex-col items-center justify-center p-5 bg-gradient-to-r from-blue-50 to-blue-100 rounded-xl shadow hover:shadow-md transition-all duration-300 hover:scale-105"
+    >
+      <FiPlusCircle className="text-blue-600 text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300" />
+      <span className="text-sm font-medium text-gray-700">Add Certificate</span>
+    </button>
+
+    {/* Add Project */}
+    <button
+      onClick={() => handleNavigation('add-project')}
+      className="group flex flex-col items-center justify-center p-5 bg-gradient-to-r from-green-50 to-green-100 rounded-xl shadow hover:shadow-md transition-all duration-300 hover:scale-105"
+    >
+      <FiFolderPlus className="text-green-600 text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300" />
+      <span className="text-sm font-medium text-gray-700">Add Project</span>
+    </button>
+
+    {/* Take Notes */}
+    <button
+      onClick={() => handleNavigation('noteseditor')}
+      className="group flex flex-col items-center justify-center p-5 bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl shadow hover:shadow-md transition-all duration-300 hover:scale-105"
+    >
+      <BsJournalBookmark className="text-purple-600 text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300" />
+      <span className="text-sm font-medium text-gray-700">Take Notes</span>
+    </button>
+
+    {/* Question Papers */}
+    <button
+      onClick={() => handleNavigation('question-papers')}
+      className="group flex flex-col items-center justify-center p-5 bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl shadow hover:shadow-md transition-all duration-300 hover:scale-105"
+    >
+      <FiBook className="text-orange-600 text-2xl mb-2 group-hover:rotate-12 transition-transform duration-300" />
+      <span className="text-sm font-medium text-gray-700">Question Papers</span>
+    </button>
+  </div>
+</div>
+
           </div>
         );
     }
   };
 
-  // Sidebar content component to avoid duplication
   const SidebarContent = ({ isMobile = false }) => (
-    <div className={`${isMobile ? 'p-4' : 'p-4 space-y-2'}`}>
-      <button
-        className={`w-full flex items-center ${activeSection === 'home' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
-        onClick={() => handleNavigation('home')}
-      >
-        <FiHome className="text-lg" />
-        {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Dashboard</span>}
-      </button>
+    <div className={`${isMobile ? 'p-4' : 'p-4 space-y-1'}`}>
+      {!isMobile && !isSidebarCollapsed && (
+        <div className="px-3 py-4 mb-2">
+          <h2 className="text-xl font-bold text-blue-600 flex items-center">
+            <FiAward className="mr-2" /> SkillPort
+          </h2>
+          <p className="text-xs text-gray-500 mt-1">Student Learning Dashboard</p>
+        </div>
+      )}
       
-      <button
-        className={`w-full flex items-center ${activeSection === 'profile' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
-        onClick={() => handleNavigation('profile')}
-      >
-        <FiUser className="text-lg" />
-        {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Profile</span>}
-      </button>
+      {isMobile && (
+        <div className="px-3 py-4 mb-2 border-b border-gray-200">
+          <h2 className="text-xl font-bold text-blue-600 flex items-center">
+            <FiAward className="mr-2" /> SkillPort
+          </h2>
+          <p className="text-xs text-gray-500 mt-1">Student Learning Dashboard</p>
+        </div>
+      )}
       
-      <button
-        className={`w-full flex items-center ${activeSection === 'studyplanner' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
-        onClick={() => handleNavigation('studyplanner')}
-      >
-        <FiFolder className="text-lg" />
-        {(!isSidebarCollapsed || isMobile) && <span className="ml-3">StudyPlanner</span>}
-      </button>
+      <div className="space-y-1">
+        <button
+          className={`w-full flex items-center ${activeSection === 'home' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
+          onClick={() => handleNavigation('home')}
+        >
+          <FiHome className="text-lg" />
+          {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Dashboard</span>}
+        </button>
+        
+        <button
+          className={`w-full flex items-center ${activeSection === 'profile' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
+          onClick={() => handleNavigation('profile')}
+        >
+          <FiUser className="text-lg" />
+          {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Profile</span>}
+        </button>
+        
+        <button
+          className={`w-full flex items-center ${activeSection === 'studyplanner' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
+          onClick={() => handleNavigation('studyplanner')}
+        >
+          <FiCalendar className="text-lg" />
+          {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Study Planner</span>}
+        </button>
+      </div>
 
-      <div className="pt-2">
+      <div className="pt-4">
         {(!isSidebarCollapsed || isMobile) && (
-          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Certificates</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-2 px-3">Achievements</p>
         )}
         <button
-          className={`w-full flex items-center ${activeSection === 'add-certificate' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'add-certificate' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('add-certificate')}
         >
           <FiPlusCircle className="text-lg" />
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Add Certificate</span>}
         </button>
         <button
-          className={`w-full flex items-center ${activeSection === 'certificates' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'certificates' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('certificates')}
         >
           <FiFileText className="text-lg" />
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">My Certificates</span>}
         </button>
-      </div>
-      
-      <div className="pt-2">
-        {(!isSidebarCollapsed || isMobile) && (
-          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Projects</p>
-        )}
         <button
-          className={`w-full flex items-center ${activeSection === 'add-project' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'add-project' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('add-project')}
         >
           <FiFolderPlus className="text-lg" />
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Add Project</span>}
         </button>
         <button
-          className={`w-full flex items-center ${activeSection === 'projects' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'projects' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('projects')}
         >
           <FiFolder className="text-lg" />
@@ -237,52 +302,58 @@ function Dashboard() {
         </button>
       </div>
       
-      <div className="pt-2">
+      <div className="pt-4">
         {(!isSidebarCollapsed || isMobile) && (
-          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Notes</p>
+          <p className="text-xs font-semibold text-gray-500 uppercase mb-2 px-3">Study Tools</p>
         )}
         <button
-          className={`w-full flex items-center ${activeSection === 'noteseditor' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'noteseditor' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('noteseditor')}
         >
-          <FiFolderPlus className="text-lg" />
+          <BsJournalBookmark className="text-lg" />
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Notes Maker</span>}
         </button>
         <button
-          className={`w-full flex items-center ${activeSection === 'noteslist' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'noteslist' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('noteslist')}
         >
-          <FiFolder className="text-lg" />
+          <FiClipboard className="text-lg" />
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Notes List</span>}
         </button>
-      </div>
-      
-      <div className="pt-2">
-        {(!isSidebarCollapsed || isMobile) && (
-          <p className="text-xs font-semibold text-gray-500 uppercase mb-2">Study Materials</p>
-        )}
         <button
-          className={`w-full flex items-center ${activeSection === 'question-papers' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'question-papers' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('question-papers')}
         >
           <FiBook className="text-lg" />
           {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Question Papers</span>}
         </button>
         <button
-          className={`w-full flex items-center ${activeSection === 'quiz' ? 'bg-blue-50 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-lg p-3 transition-all`}
+          className={`w-full flex items-center ${activeSection === 'quiz' ? 'bg-blue-100 text-blue-600' : 'text-gray-700 hover:bg-gray-100'} rounded-xl p-3 transition-all`}
           onClick={() => handleNavigation('quiz')}
         >
-          <FiBookOpen className="text-lg" />
-          {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Quiz</span>}
+          <FiHelpCircle className="text-lg" />
+          {(!isSidebarCollapsed || isMobile) && <span className="ml-3">Quizzes</span>}
         </button>
       </div>
+      
+      {(!isSidebarCollapsed || isMobile) && (
+        <div className="pt-4 border-t border-gray-200 mt-4">
+          <button
+            className="w-full flex items-center text-gray-700 hover:bg-gray-100 rounded-xl p-3 transition-all"
+            onClick={logout}
+          >
+            <FiLogOut className="text-lg" />
+            <span className="ml-3">Logout</span>
+          </button>
+        </div>
+      )}
     </div>
   );
 
   return (
     <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50">
       {/* Mobile Header */}
-      <div className="lg:hidden bg-white shadow-sm p-4 flex justify-between items-center">
+      <div className="lg:hidden bg-white shadow-sm p-4 flex justify-between items-center sticky top-0 z-30">
         <button
           onClick={() => setIsMobileSidebarOpen(!isMobileSidebarOpen)}
           className="text-gray-600 hover:text-gray-800 p-2 rounded-md"
@@ -297,18 +368,15 @@ function Dashboard() {
           {activeSection === 'add-project' && 'Add Project'}
           {activeSection === 'projects' && 'My Projects'}
           {activeSection === 'studyplanner' && 'Study Planner'}
-          {activeSection === 'noteseditor' && 'Notes maker'}
+          {activeSection === 'noteseditor' && 'Notes Maker'}
           {activeSection === 'noteslist' && 'Notes List'}
           {activeSection === 'question-papers' && 'Question Papers'}
-          {activeSection === 'quiz' && 'Quiz'}
+          {activeSection === 'quiz' && 'Quizzes'}
         </h1>
         <div className="flex items-center space-x-2">
-          <button
-            className="flex items-center text-gray-600 hover:text-red-500 transition-colors"
-            onClick={logout}
-          >
-            <FiLogOut className="mr-1" />
-          </button>
+          <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
+            {userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}
+          </div>
         </div>
       </div>
 
@@ -319,25 +387,14 @@ function Dashboard() {
             className="fixed inset-0 bg-black bg-opacity-50"
             onClick={() => setIsMobileSidebarOpen(false)}
           ></div>
-          <div className="relative h-full w-72 bg-white shadow-lg z-50">
-            <div className="p-4 border-b border-gray-200 flex items-center justify-between">
-              <h2 className="text-xl font-bold text-blue-600 flex items-center">
-                <FiAward className="mr-2" /> SkillPort
-              </h2>
-              <button 
-                onClick={() => setIsMobileSidebarOpen(false)}
-                className="text-gray-500 hover:text-gray-700"
-              >
-                <FiX size={20} />
-              </button>
-            </div>
+          <div className="relative h-full w-72 bg-white shadow-lg z-50 overflow-y-auto">
             <SidebarContent isMobile />
           </div>
         </div>
       )}
 
       {/* Desktop Sidebar */}
-      <div className={`hidden lg:block ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-lg transition-all duration-300 flex flex-col`}>
+      <div className={`hidden lg:flex ${isSidebarCollapsed ? 'w-20' : 'w-64'} bg-white shadow-lg transition-all duration-300 flex-col sticky top-0 h-screen`}>
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           {!isSidebarCollapsed && (
             <h2 className="text-xl font-bold text-blue-600 flex items-center">
@@ -351,48 +408,68 @@ function Dashboard() {
           )}
           <button 
             onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)}
-            className="text-gray-500 hover:text-gray-700"
+            className="text-gray-500 hover:text-gray-700 p-1 rounded-full hover:bg-gray-100"
           >
-            {isSidebarCollapsed ? '»' : '«'}
+            {isSidebarCollapsed ? <FiMenu size={20} /> : <FiX size={20} />}
           </button>
         </div>
-        <SidebarContent />
+        <div className="flex-1 overflow-y-auto">
+          <SidebarContent />
+        </div>
+        {isSidebarCollapsed && (
+          <div className="p-4 border-t border-gray-200">
+            <button
+              onClick={logout}
+              className="w-full flex justify-center text-gray-600 hover:text-red-500 p-2 rounded-lg"
+              title="Logout"
+            >
+              <FiLogOut size={20} />
+            </button>
+          </div>
+        )}
       </div>
 
       {/* Main Content */}
       <div className="flex-1 overflow-auto">
         {/* Desktop Header */}
-        <div className="hidden lg:flex bg-white shadow-sm p-4 justify-between items-center">
-          <h1 className="text-xl font-semibold text-gray-800">
-            {activeSection === 'home' && 'Dashboard'}
-            {activeSection === 'profile' && 'Profile'}
-            {activeSection === 'add-certificate' && 'Add Certificate'}
-            {activeSection === 'certificates' && 'My Certificates'}
-            {activeSection === 'add-project' && 'Add Project'}
-            {activeSection === 'projects' && 'My Projects'}
-            {activeSection === 'studyplanner' && 'Study Planner'}
-            {activeSection === 'noteseditor' && 'Notes maker'}
-            {activeSection === 'noteslist' && 'Notes List'}
-            {activeSection === 'question-papers' && 'Question Papers'}
-            {activeSection === 'quiz' && 'Quiz'}
-          </h1>
+        <div className="hidden lg:flex bg-white shadow-sm p-4 justify-between items-center sticky top-0 z-20">
+          <div className="flex items-center">
+            <h1 className="text-xl font-semibold text-gray-800">
+              {activeSection === 'home' && 'Dashboard'}
+              {activeSection === 'profile' && 'My Profile'}
+              {activeSection === 'add-certificate' && 'Add Certificate'}
+              {activeSection === 'certificates' && 'My Certificates'}
+              {activeSection === 'add-project' && 'Add Project'}
+              {activeSection === 'projects' && 'My Projects'}
+              {activeSection === 'studyplanner' && 'Study Planner'}
+              {activeSection === 'noteseditor' && 'Notes Maker'}
+              {activeSection === 'noteslist' && 'My Notes'}
+              {activeSection === 'question-papers' && 'Question Papers'}
+              {activeSection === 'quiz' && 'Practice Quizzes'}
+            </h1>
+          </div>
           
-          <div className="flex items-center space-x-4">
-            <div className="flex items-center">
-              <FiUser className="text-gray-500 mr-2" />
-              <span className="text-gray-700">{userEmail}</span>
-            </div>
-            <button
-              className="flex items-center text-gray-600 hover:text-red-500 transition-colors"
-              onClick={logout}
-            >
-              <FiLogOut className="mr-1" />
-              <span>Logout</span>
+          <div className="flex items-center space-x-6">
+            <button className="text-gray-500 hover:text-blue-600 transition-colors relative">
+              <FiMessageSquare size={20} />
+              <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">3</span>
             </button>
+            
+            <div className="flex items-center space-x-3">
+              <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm font-medium shadow-md">
+                {userEmail ? userEmail.charAt(0).toUpperCase() : 'U'}
+              </div>
+              {!isSidebarCollapsed && (
+                <div className="flex flex-col">
+                  <span className="text-sm font-medium text-gray-700">{userEmail}</span>
+                  <span className="text-xs text-gray-500">Student</span>
+                </div>
+              )}
+            </div>
           </div>
         </div>
 
-        <div className="p-4 lg:p-6">
+        <div className="p-4 lg:p-6 min-h-[calc(100vh-80px)]">
           {renderContent()}
         </div>
       </div>
