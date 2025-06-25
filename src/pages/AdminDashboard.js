@@ -1,14 +1,56 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { collection, getDocs, addDoc, query, orderBy } from 'firebase/firestore';
 import { db } from '../firebase';
 import { useAuth } from '../contexts/AuthContext';
-import { Card, Typography, Spin, Alert, Button, Table, Form, Input, Select, Divider, Modal, message, Tag, Space } from 'antd';
-import { PlusOutlined, EditOutlined, DeleteOutlined, LinkOutlined } from '@ant-design/icons';
+import { 
+  Card, 
+  Typography, 
+  Spin, 
+  Alert, 
+  Button, 
+  Table, 
+  Form, 
+  Input, 
+  Select, 
+  Modal, 
+  message, 
+  Tag, 
+  Space,
+  Tabs,
+  Divider
+} from 'antd';
+import { 
+  PlusOutlined, 
+  EditOutlined, 
+  DeleteOutlined, 
+  LinkOutlined,
+  UserOutlined,
+  FileTextOutlined,
+  QuestionCircleOutlined
+} from '@ant-design/icons';
 import { useNavigate } from 'react-router-dom';
+import QuestionPaperUpload from '../pages/QuestionPaperUpload';
 
 const { Title, Text } = Typography;
 const { Option } = Select;
 const { TextArea } = Input;
+const { TabPane } = Tabs;
+
+const RESOURCE_TYPES = {
+  USERS: 'users',
+  QUESTION_PAPERS: 'questionPapers',
+  QUIZZES: 'quizzes'
+};
+
+const SUBJECT_OPTIONS = [
+  { value: 'math', label: 'Mathematics' },
+  { value: 'science', label: 'Science' },
+  { value: 'history', label: 'History' },
+  { value: 'english', label: 'English' },
+  { value: 'physics', label: 'Physics' },
+  { value: 'chemistry', label: 'Chemistry' },
+  { value: 'biology', label: 'Biology' },
+];
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
@@ -19,141 +61,110 @@ export default function AdminDashboard() {
   const [users, setUsers] = useState([]);
   const [questionPapers, setQuestionPapers] = useState([]);
   const [quizzes, setQuizzes] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState({
+    users: true,
+    questionPapers: true,
+    quizzes: true
+  });
   const [error, setError] = useState(null);
-  const [activeTab, setActiveTab] = useState('users');
-  const [isQuestionModalVisible, setIsQuestionModalVisible] = useState(false);
-  const [isQuizModalVisible, setIsQuizModalVisible] = useState(false);
-  const [questionPapersLoading, setQuestionPapersLoading] = useState(false);
-  const [quizzesLoading, setQuizzesLoading] = useState(false);
+  const [activeTab, setActiveTab] = useState(RESOURCE_TYPES.USERS);
+  const [modalVisible, setModalVisible] = useState({
+    question: false,
+    quiz: false
+  });
+
+  const fetchData = useCallback(async (resourceType) => {
+    try {
+      setLoading(prev => ({ ...prev, [resourceType]: true }));
+      
+      const q = query(
+        collection(db, resourceType), 
+        orderBy('createdAt', 'desc')
+      );
+      
+      const snapshot = await getDocs(q);
+      const data = snapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data(),
+        createdAt: doc.data().createdAt?.toDate().toLocaleString(),
+      }));
+
+      switch(resourceType) {
+        case RESOURCE_TYPES.USERS:
+          setUsers(data);
+          break;
+        case RESOURCE_TYPES.QUESTION_PAPERS:
+          setQuestionPapers(data);
+          break;
+        case RESOURCE_TYPES.QUIZZES:
+          setQuizzes(data);
+          break;
+        default:
+          break;
+      }
+    } catch (err) {
+      console.error(`Error fetching ${resourceType}:`, err);
+      message.error(`Failed to fetch ${resourceType}`);
+      if (resourceType === RESOURCE_TYPES.USERS) {
+        setError('Failed to fetch user data. Make sure you have admin access and correct Firestore rules.');
+      }
+    } finally {
+      setLoading(prev => ({ ...prev, [resourceType]: false }));
+    }
+  }, []);
 
   useEffect(() => {
-    const fetchUserData = async () => {
-      try {
-        setLoading(true);
-        const snapshot = await getDocs(collection(db, 'users'));
-        const usersData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-        }));
-        setUsers(usersData);
-      } catch (err) {
-        console.error('Error fetching user data:', err);
-        setError('Failed to fetch user data. Make sure you have admin access and correct Firestore rules.');
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const fetchQuestionPapers = async () => {
-      try {
-        setQuestionPapersLoading(true);
-        const q = query(collection(db, 'questionPapers'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const papers = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data().createdAt?.toDate().toLocaleString(),
-        }));
-        setQuestionPapers(papers);
-      } catch (err) {
-        console.error('Error fetching question papers:', err);
-        message.error('Failed to fetch question papers');
-      } finally {
-        setQuestionPapersLoading(false);
-      }
-    };
-
-    const fetchQuizzes = async () => {
-      try {
-        setQuizzesLoading(true);
-        const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
-        const snapshot = await getDocs(q);
-        const quizzesData = snapshot.docs.map(doc => ({
-          id: doc.id,
-          ...doc.data(),
-          createdAt: doc.data().createdAt?.toDate().toLocaleString(),
-        }));
-        setQuizzes(quizzesData);
-      } catch (err) {
-        console.error('Error fetching quizzes:', err);
-        message.error('Failed to fetch quizzes');
-      } finally {
-        setQuizzesLoading(false);
-      }
-    };
-
     if (currentUser && isAdmin) {
-      fetchUserData();
-      fetchQuestionPapers();
-      fetchQuizzes();
+      fetchData(RESOURCE_TYPES.USERS);
+      fetchData(RESOURCE_TYPES.QUESTION_PAPERS);
+      fetchData(RESOURCE_TYPES.QUIZZES);
     }
-  }, [currentUser, isAdmin]);
+  }, [currentUser, isAdmin, fetchData]);
 
-  const handleQuestionSubmit = async (values) => {
+  const handleSubmit = async (values, resourceType) => {
     try {
-      const data = {
+      const commonData = {
         title: values.title,
         subject: values.subject,
         link: values.link,
-        type: 'questionPaper',
+        type: resourceType === RESOURCE_TYPES.QUESTION_PAPERS ? 'questionPaper' : 'quiz',
         createdAt: new Date(),
         createdBy: currentUser.uid,
-        description: values.description || null, // Ensure description is never undefined
+        description: values.description || null,
       };
 
-      await addDoc(collection(db, 'questionPapers'), data);
-      message.success('Question paper added successfully!');
-      setIsQuestionModalVisible(false);
+      const data = resourceType === RESOURCE_TYPES.QUIZZES 
+        ? { ...commonData, duration: values.duration }
+        : commonData;
+
+      await addDoc(collection(db, resourceType), data);
+      message.success(`${resourceType === RESOURCE_TYPES.QUESTION_PAPERS ? 'Question paper' : 'Quiz'} added successfully!`);
+      
+      setModalVisible(prev => ({
+        ...prev,
+        [resourceType === RESOURCE_TYPES.QUESTION_PAPERS ? 'question' : 'quiz']: false
+      }));
+      
       form.resetFields();
-      
-      // Refresh the question papers list
-      const q = query(collection(db, 'questionPapers'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      const papers = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate().toLocaleString(),
-      }));
-      setQuestionPapers(papers);
-    } catch (err) {
-      console.error('Error adding question paper:', err);
-      message.error('Failed to add question paper');
-    }
-  };
-
-  const handleQuizSubmit = async (values) => {
-    try {
-      const data = {
-        title: values.title,
-        subject: values.subject,
-        link: values.link,
-        duration: values.duration,
-        type: 'quiz',
-        createdAt: new Date(),
-        createdBy: currentUser.uid,
-        description: values.description || null, // Ensure description is never undefined
-      };
-
-      await addDoc(collection(db, 'quizzes'), data);
-      message.success('Quiz added successfully!');
-      setIsQuizModalVisible(false);
       quizForm.resetFields();
-      
-      // Refresh the quizzes list
-      const q = query(collection(db, 'quizzes'), orderBy('createdAt', 'desc'));
-      const snapshot = await getDocs(q);
-      const quizzesData = snapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data(),
-        createdAt: doc.data().createdAt?.toDate().toLocaleString(),
-      }));
-      setQuizzes(quizzesData);
+      await fetchData(resourceType);
     } catch (err) {
-      console.error('Error adding quiz:', err);
-      message.error('Failed to add quiz');
+      console.error(`Error adding ${resourceType}:`, err);
+      message.error(`Failed to add ${resourceType === RESOURCE_TYPES.QUESTION_PAPERS ? 'question paper' : 'quiz'}`);
     }
   };
+
+  const renderActions = (_, record) => (
+    <Space size="middle">
+      <Button 
+        icon={<LinkOutlined />} 
+        onClick={() => window.open(record.link, '_blank')}
+        title="Open link"
+      />
+      <Button icon={<EditOutlined />} title="Edit" />
+      <Button icon={<DeleteOutlined />} danger title="Delete" />
+    </Space>
+  );
 
   const questionPaperColumns = [
     {
@@ -161,7 +172,7 @@ export default function AdminDashboard() {
       dataIndex: 'title',
       key: 'title',
       render: (text, record) => (
-        <a href={record.link} rel="noopener noreferrer">
+        <a href={record.link} target="_blank" rel="noopener noreferrer">
           {text}
         </a>
       ),
@@ -170,7 +181,9 @@ export default function AdminDashboard() {
       title: 'Subject',
       dataIndex: 'subject',
       key: 'subject',
-      render: (subject) => <Tag color="blue">{subject}</Tag>,
+      render: subject => <Tag color="blue">{subject}</Tag>,
+      filters: SUBJECT_OPTIONS.map(sub => ({ text: sub.label, value: sub.value })),
+      onFilter: (value, record) => record.subject === value,
     },
     {
       title: 'Description',
@@ -182,20 +195,12 @@ export default function AdminDashboard() {
       title: 'Created At',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button 
-            icon={<LinkOutlined />} 
-            onClick={() => window.location.href = record.link}
-          />
-          <Button icon={<EditOutlined />} />
-          <Button icon={<DeleteOutlined />} danger />
-        </Space>
-      ),
+      render: renderActions,
     },
   ];
 
@@ -205,7 +210,7 @@ export default function AdminDashboard() {
       dataIndex: 'title',
       key: 'title',
       render: (text, record) => (
-        <a href={record.link} rel="noopener noreferrer">
+        <a href={record.link} target="_blank" rel="noopener noreferrer">
           {text}
         </a>
       ),
@@ -214,221 +219,264 @@ export default function AdminDashboard() {
       title: 'Subject',
       dataIndex: 'subject',
       key: 'subject',
-      render: (subject) => <Tag color="green">{subject}</Tag>,
+      render: subject => <Tag color="green">{subject}</Tag>,
+      filters: SUBJECT_OPTIONS.map(sub => ({ text: sub.label, value: sub.value })),
+      onFilter: (value, record) => record.subject === value,
     },
     {
       title: 'Duration',
       dataIndex: 'duration',
       key: 'duration',
-      render: (duration) => `${duration} minutes`,
+      render: duration => `${duration} minutes`,
+      sorter: (a, b) => a.duration - b.duration,
     },
     {
       title: 'Created At',
       dataIndex: 'createdAt',
       key: 'createdAt',
+      sorter: (a, b) => new Date(a.createdAt) - new Date(b.createdAt),
     },
     {
       title: 'Actions',
       key: 'actions',
-      render: (_, record) => (
-        <Space size="middle">
-          <Button 
-            icon={<LinkOutlined />} 
-            onClick={() => window.location.href = record.link}
-          />
-          <Button icon={<EditOutlined />} />
-          <Button icon={<DeleteOutlined />} danger />
-        </Space>
-      ),
+      render: renderActions,
+    },
+  ];
+
+  const userColumns = [
+    {
+      title: 'Full Name',
+      key: 'name',
+      render: (_, record) => `${record.firstName || ''} ${record.lastName || ''}`.trim() || 'N/A',
+      sorter: (a, b) => {
+        const nameA = `${a.firstName || ''} ${a.lastName || ''}`.trim().toLowerCase();
+        const nameB = `${b.firstName || ''} ${b.lastName || ''}`.trim().toLowerCase();
+        return nameA.localeCompare(nameB);
+      },
+    },
+    {
+      title: 'Email',
+      dataIndex: 'email',
+      key: 'email',
+      sorter: (a, b) => a.email.localeCompare(b.email),
+    },
+    {
+      title: 'Role',
+      dataIndex: 'role',
+      key: 'role',
+      render: role => <Tag color={role === 'admin' ? 'red' : 'blue'}>{role || 'user'}</Tag>,
+      filters: [
+        { text: 'Admin', value: 'admin' },
+        { text: 'User', value: 'user' },
+      ],
+      onFilter: (value, record) => (record.role || 'user') === value,
     },
   ];
 
   if (authLoading) {
     return (
-      <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '100vh' }}>
-        <Spin tip="Authenticating..." />
+      <div className="center-container">
+        <Spin tip="Authenticating..." size="large" />
       </div>
     );
   }
 
   if (!currentUser) {
     return (
-      <Alert
-        message="Authentication Required"
-        description="Please sign in to access this page."
-        type="warning"
-        showIcon
-        action={
-          <Button size="small" type="primary" onClick={() => navigate('/login')}>
-            Sign In
-          </Button>
-        }
-        style={{ margin: '24px' }}
-      />
+      <div className="center-container">
+        <Alert
+          message="Authentication Required"
+          description="Please sign in to access the admin dashboard."
+          type="warning"
+          showIcon
+          action={
+            <Button size="small" type="primary" onClick={() => navigate('/login')}>
+              Sign In
+            </Button>
+          }
+        />
+      </div>
     );
   }
 
   if (!isAdmin) {
     return (
-      <div style={{ padding: '24px', maxWidth: '800px', margin: '0 auto' }}>
+      <div className="center-container">
         <Alert
           message="Access Denied"
           description="You must be an administrator to view this page."
           type="error"
           showIcon
-          style={{ marginBottom: '20px' }}
+          action={
+            <Button size="small" type="primary" onClick={() => navigate('/')}>
+              Return to Home
+            </Button>
+          }
         />
-        <Button type="primary" onClick={() => navigate('/')}>Return to Home</Button>
       </div>
     );
   }
 
   if (error) {
     return (
-      <Alert
-        message="Error"
-        description={error}
-        type="error"
-        showIcon
-        style={{ margin: '24px' }}
-      />
+      <div className="center-container">
+        <Alert
+          message="Error"
+          description={error}
+          type="error"
+          showIcon
+        />
+      </div>
     );
   }
 
-  const userColumns = [
-    {
-      title: 'Full Name',
-      key: 'name',
-      render: (_, record) => `${record.firstName || ''} ${record.lastName || ''}`,
-    },
-    {
-      title: 'Email',
-      dataIndex: 'email',
-      key: 'email',
-    },
-  ];
-
   return (
-    <div style={{ padding: '24px', maxWidth: '1200px', margin: '0 auto' }}>
+    <div className="admin-dashboard-container">
       <Card
-        title={<Title level={2}>Admin Dashboard</Title>}
-        tabList={[
-          { key: 'users', tab: 'User Management' },
-          { key: 'questions', tab: 'Question Papers' },
-          { key: 'quizzes', tab: 'Quizzes' },
-        ]}
-        activeTabKey={activeTab}
-        onTabChange={key => setActiveTab(key)}
-        extra={[
-          activeTab === 'questions' && (
-            <Button key="add-question" type="primary" icon={<PlusOutlined />} onClick={() => setIsQuestionModalVisible(true)}>
-              Add Question Paper
-            </Button>
-          ),
-          activeTab === 'quizzes' && (
-            <Button key="add-quiz" type="primary" icon={<PlusOutlined />} onClick={() => setIsQuizModalVisible(true)}>
-              Add Quiz
-            </Button>
-          ),
-        ]}
+        title={
+          <div className="dashboard-header">
+            <Title level={3} className="dashboard-title">
+              <Space>
+                <UserOutlined />
+                Admin Dashboard
+              </Space>
+            </Title>
+            <Text type="secondary">Manage system resources and users</Text>
+          </div>
+        }
+        bordered={false}
+        className="dashboard-card"
       >
-        {loading && activeTab === 'users' ? (
-          <Spin tip="Loading data...">
-            <div style={{ height: 200 }} />
-          </Spin>
-        ) : (
-          <>
-            {activeTab === 'users' && (
-              <>
-                <div style={{ marginTop: 24, marginBottom: 24 }}>
-                  <Text>Total Users in System:</Text>
-                  <Title level={1} style={{ color: '#1890ff' }}>{users.length}</Title>
-                </div>
-                <Table
-                  dataSource={users}
-                  columns={userColumns}
-                  rowKey="id"
-                  bordered
-                  pagination={{
-                    pageSize: 5,
-                    showTotal: (total) => `Total ${total} users`,
-                  }}
-                />
-              </>
-            )}
+        <Tabs
+          activeKey={activeTab}
+          onChange={setActiveTab}
+          className="dashboard-tabs"
+        >
+          <TabPane
+            tab={
+              <span>
+                <UserOutlined />
+                Users
+              </span>
+            }
+            key={RESOURCE_TYPES.USERS}
+          >
+            <div className="resource-section">
+              <div className="stats-header">
+                <Text>Total Users:</Text>
+                <Title level={2} className="stats-value">{users.length}</Title>
+              </div>
+              <Divider />
+              <Table
+                dataSource={users}
+                columns={userColumns}
+                rowKey="id"
+                loading={loading.users}
+                bordered
+                pagination={{
+                  pageSize: 10,
+                  showSizeChanger: true,
+                  showTotal: total => `Total ${total} users`,
+                }}
+              />
+            </div>
+          </TabPane>
 
-            {activeTab === 'questions' && (
-              <div>
-                <div style={{ marginBottom: 16 }}>
-                  <Button 
-                    type="primary" 
-                    icon={<PlusOutlined />} 
-                    onClick={() => setIsQuestionModalVisible(true)}
-                  >
-                    Add New Question Paper
-                  </Button>
-                </div>
-                <Table
-                  dataSource={questionPapers}
-                  columns={questionPaperColumns}
-                  rowKey="id"
-                  loading={questionPapersLoading}
-                  bordered
-                  pagination={{
-                    pageSize: 5,
-                    showTotal: (total) => `Total ${total} question papers`,
-                  }}
+          <TabPane
+            tab={
+              <span>
+                <FileTextOutlined />
+                Question Papers
+              </span>
+            }
+            key={RESOURCE_TYPES.QUESTION_PAPERS}
+          >
+            <div className="resource-section">
+              <div className="action-header">
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />}
+                  onClick={() => setModalVisible({ ...modalVisible, question: true })}
+                >
+                  Add Question Paper
+                </Button>
+                <QuestionPaperUpload 
+                  onSuccess={() => fetchData(RESOURCE_TYPES.QUESTION_PAPERS)}
+                  style={{ marginLeft: 16 }}
                 />
               </div>
-            )}
+              <Divider />
+              <Table
+                dataSource={questionPapers}
+                columns={questionPaperColumns}
+                rowKey="id"
+                loading={loading.questionPapers}
+                bordered
+                pagination={{
+                  pageSize: 10,
+                  showSizeChanger: true,
+                  showTotal: total => `Total ${total} question papers`,
+                }}
+              />
+            </div>
+          </TabPane>
 
-            {activeTab === 'quizzes' && (
-              <div>
-                <div style={{ marginBottom: 16 }}>
-                  <Button 
-                    type="primary" 
-                    icon={<PlusOutlined />} 
-                    onClick={() => setIsQuizModalVisible(true)}
-                  >
-                    Add New Quiz
-                  </Button>
-                </div>
-                <Table
-                  dataSource={quizzes}
-                  columns={quizColumns}
-                  rowKey="id"
-                  loading={quizzesLoading}
-                  bordered
-                  pagination={{
-                    pageSize: 5,
-                    showTotal: (total) => `Total ${total} quizzes`,
-                  }}
-                />
+          <TabPane
+            tab={
+              <span>
+                <QuestionCircleOutlined />
+                Quizzes
+              </span>
+            }
+            key={RESOURCE_TYPES.QUIZZES}
+          >
+            <div className="resource-section">
+              <div className="action-header">
+                <Button 
+                  type="primary" 
+                  icon={<PlusOutlined />}
+                  onClick={() => setModalVisible({ ...modalVisible, quiz: true })}
+                >
+                  Add Quiz
+                </Button>
               </div>
-            )}
-          </>
-        )}
+              <Divider />
+              <Table
+                dataSource={quizzes}
+                columns={quizColumns}
+                rowKey="id"
+                loading={loading.quizzes}
+                bordered
+                pagination={{
+                  pageSize: 10,
+                  showSizeChanger: true,
+                  showTotal: total => `Total ${total} quizzes`,
+                }}
+              />
+            </div>
+          </TabPane>
+        </Tabs>
       </Card>
 
-      {/* Add Question Paper Modal */}
+      {/* Question Paper Modal */}
       <Modal
         title="Add Question Paper"
-        open={isQuestionModalVisible}
-        onCancel={() => setIsQuestionModalVisible(false)}
+        visible={modalVisible.question}
+        onCancel={() => setModalVisible({ ...modalVisible, question: false })}
         footer={null}
-        width={800}
+        destroyOnClose
       >
         <Form
           form={form}
           layout="vertical"
-          onFinish={handleQuestionSubmit}
+          onFinish={values => handleSubmit(values, RESOURCE_TYPES.QUESTION_PAPERS)}
         >
           <Form.Item
             name="title"
             label="Title"
             rules={[{ required: true, message: 'Please input the title!' }]}
           >
-            <Input placeholder="Enter question paper title" />
+            <Input placeholder="Enter title" />
           </Form.Item>
 
           <Form.Item
@@ -436,52 +484,60 @@ export default function AdminDashboard() {
             label="Subject"
             rules={[{ required: true, message: 'Please select the subject!' }]}
           >
-            <Select placeholder="Select subject">
-              <Option value="math">Mathematics</Option>
-              <Option value="science">Science</Option>
-              <Option value="history">History</Option>
-              <Option value="english">English</Option>
+            <Select 
+              placeholder="Select subject"
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {SUBJECT_OPTIONS.map(subject => (
+                <Option key={subject.value} value={subject.value}>
+                  {subject.label}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
 
           <Form.Item
             name="link"
-            label="Question Paper Link"
+            label="Document Link"
             rules={[
               { required: true, message: 'Please input the link!' },
               { type: 'url', message: 'Please enter a valid URL!' }
             ]}
           >
-            <Input placeholder="https://example.com/question-paper.pdf" />
+            <Input placeholder="https://example.com/document" />
           </Form.Item>
 
           <Form.Item
             name="description"
-            label="Description"
+            label="Description (Optional)"
           >
-            <TextArea rows={4} placeholder="Enter description (optional)" />
+            <TextArea rows={4} placeholder="Enter description" />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" block>
               Submit
             </Button>
           </Form.Item>
         </Form>
       </Modal>
 
-      {/* Add Quiz Modal */}
+      {/* Quiz Modal */}
       <Modal
         title="Add Quiz"
-        open={isQuizModalVisible}
-        onCancel={() => setIsQuizModalVisible(false)}
+        visible={modalVisible.quiz}
+        onCancel={() => setModalVisible({ ...modalVisible, quiz: false })}
         footer={null}
-        width={800}
+        destroyOnClose
       >
         <Form
           form={quizForm}
           layout="vertical"
-          onFinish={handleQuizSubmit}
+          onFinish={values => handleSubmit(values, RESOURCE_TYPES.QUIZZES)}
         >
           <Form.Item
             name="title"
@@ -496,11 +552,19 @@ export default function AdminDashboard() {
             label="Subject"
             rules={[{ required: true, message: 'Please select the subject!' }]}
           >
-            <Select placeholder="Select subject">
-              <Option value="math">Mathematics</Option>
-              <Option value="science">Science</Option>
-              <Option value="history">History</Option>
-              <Option value="english">English</Option>
+            <Select 
+              placeholder="Select subject"
+              showSearch
+              optionFilterProp="children"
+              filterOption={(input, option) =>
+                option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+              }
+            >
+              {SUBJECT_OPTIONS.map(subject => (
+                <Option key={subject.value} value={subject.value}>
+                  {subject.label}
+                </Option>
+              ))}
             </Select>
           </Form.Item>
 
@@ -520,18 +584,18 @@ export default function AdminDashboard() {
             label="Duration (minutes)"
             rules={[{ required: true, message: 'Please input the duration!' }]}
           >
-            <Input type="number" placeholder="Enter duration in minutes" />
+            <Input type="number" min={1} placeholder="Enter duration in minutes" />
           </Form.Item>
 
           <Form.Item
             name="description"
-            label="Description"
+            label="Description (Optional)"
           >
-            <TextArea rows={4} placeholder="Enter description (optional)" />
+            <TextArea rows={4} placeholder="Enter description" />
           </Form.Item>
 
           <Form.Item>
-            <Button type="primary" htmlType="submit">
+            <Button type="primary" htmlType="submit" block>
               Submit
             </Button>
           </Form.Item>
