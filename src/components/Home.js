@@ -10,7 +10,7 @@ function Home() {
       {/* Top Navbar */}
       <header className="w-full px-4 md:px-8 py-4 flex justify-between items-center bg-white shadow-sm border-b">
         <h1 className="text-2xl md:text-3xl font-bold text-blue-700 tracking-tight">
-          SkillPort<span className="text-indigo-500">.</span>
+          JnanaSetu<span className="text-indigo-500">.</span>
         </h1>
         <div className="space-x-2 md:space-x-4">
           <button
@@ -36,7 +36,7 @@ function Home() {
             Build a Digital Portfolio <br className="hidden sm:inline" /> and Let Your Skills Shine
           </h2>
           <p className="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed">
-            SkillPort empowers you to showcase your certificates, projects, and achievements — all in one beautifully organized profile.
+            JnanaSetu empowers you to showcase your certificates, projects, and achievements — all in one beautifully organized profile.
           </p>
           <button
             onClick={() => navigate('/register')}
@@ -63,7 +63,7 @@ function Home() {
       {/* Copyright section */}
       <div className="flex flex-col items-center md:items-start">
         <p className="text-sm text-gray-500">
-          © {new Date().getFullYear()} SkillPort. All rights reserved.
+          © {new Date().getFullYear()} JnanaSetu. All rights reserved.
         </p>
       </div>
 
