@@ -10,11 +10,57 @@
     "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices"],
     "Arts": ["History", "Political Science", "Geography", "Economics", "Psychology"]
   },
+
   "Engineering": {
-    "CSE": ["Data Structures", "Algorithms", "Computer Networks", "DBMS", "Operating Systems"],
-    "ECE": ["Digital Electronics", "Signals & Systems", "VLSI Design", "Communication Systems"],
-    "EEE": ["Circuit Theory", "Power Systems", "Control Systems", "Electrical Machines"],
-    "ME": ["Thermodynamics", "Fluid Mechanics", "Machine Design"],
-    "CE": ["Structural Analysis", "Geotechnical Engineering", "Transportation Engineering"]
+    "CSE": {
+      "1st Sem": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Programming in C", "Engineering Drawing"],
+      "2nd Sem": ["Mathematics-II", "Chemistry", "Basic Electronics", "Data Structures", "Discrete Mathematics"],
+      "3rd Sem": ["Computer Organization", "Digital Logic Design", "Algorithms", "Theory of Computation", "Probability & Statistics"],
+      "4th Sem": ["Operating Systems", "Computer Networks", "DBMS", "Compiler Design", "Software Engineering"],
+      "5th Sem": ["Machine Learning", "Artificial Intelligence", "Computer Graphics", "Web Technologies", "Elective-I"],
+      "6th Sem": ["Cloud Computing", "Big Data Analytics", "Cyber Security", "Internet of Things", "Elective-II"],
+      "7th Sem": ["Distributed Systems", "Natural Language Processing", "Blockchain Technology", "Project-I", "Elective-III"],
+      "8th Sem": ["Advanced Algorithms", "Capstone Project", "Internship", "Seminar", "Elective-IV"]
+    },
+    "ECE": {
+      "1st Sem": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Chemistry", "Engineering Drawing"],
+      "2nd Sem": ["Mathematics-II", "Environmental Science", "Basic Electronics", "Programming in C", "Circuit Theory"],
+      "3rd Sem": ["Digital Electronics", "Signals & Systems", "Electronic Devices", "Network Analysis", "Electromagnetic Theory"],
+      "4th Sem": ["Analog Circuits", "Communication Systems", "Microprocessors", "Control Systems", "VLSI Design"],
+      "5th Sem": ["Digital Signal Processing", "Microwave Engineering", "Embedded Systems", "Optical Communication", "Elective-I"],
+      "6th Sem": ["Wireless Communication", "Radar Systems", "Satellite Communication", "VHDL Programming", "Elective-II"],
+      "7th Sem": ["Image Processing", "Nanoelectronics", "Project-I", "Industrial Electronics", "Elective-III"],
+      "8th Sem": ["Advanced Communication Systems", "Capstone Project", "Internship", "Seminar", "Elective-IV"]
+    },
+    "EEE": {
+      "1st Sem": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Chemistry", "Engineering Drawing"],
+      "2nd Sem": ["Mathematics-II", "Environmental Science", "Basic Electronics", "Programming in C", "Circuit Theory"],
+      "3rd Sem": ["Electrical Machines-I", "Power Systems-I", "Electromagnetic Theory", "Network Analysis", "Measurements & Instrumentation"],
+      "4th Sem": ["Electrical Machines-II", "Power Systems-II", "Control Systems", "Power Electronics", "Digital Signal Processing"],
+      "5th Sem": ["Renewable Energy Systems", "High Voltage Engineering", "Microprocessors", "Industrial Drives", "Elective-I"],
+      "6th Sem": ["Power System Protection", "Flexible AC Transmission", "Smart Grid Technologies", "Energy Management", "Elective-II"],
+      "7th Sem": ["Advanced Power Systems", "Electric Vehicle Technology", "Project-I", "Industrial Automation", "Elective-III"],
+      "8th Sem": ["Power Quality", "Capstone Project", "Internship", "Seminar", "Elective-IV"]
+    },
+    "ME": {
+      "1st Sem": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Chemistry", "Engineering Drawing"],
+      "2nd Sem": ["Mathematics-II", "Environmental Science", "Basic Electronics", "Programming in C", "Workshop Technology"],
+      "3rd Sem": ["Thermodynamics", "Mechanics of Solids", "Manufacturing Processes", "Fluid Mechanics", "Machine Drawing"],
+      "4th Sem": ["Heat Transfer", "Kinematics of Machines", "Dynamics of Machinery", "Machine Design", "Metrology"],
+      "5th Sem": ["IC Engines", "Refrigeration & Air Conditioning", "CAD/CAM", "Automobile Engineering", "Elective-I"],
+      "6th Sem": ["Robotics", "Mechatronics", "Computational Fluid Dynamics", "Composite Materials", "Elective-II"],
+      "7th Sem": ["Finite Element Analysis", "Industrial Engineering", "Project-I", "Quality Control", "Elective-III"],
+      "8th Sem": ["Advanced Manufacturing", "Capstone Project", "Internship", "Seminar", "Elective-IV"]
+    },
+    "CE": {
+      "1st Sem": ["Mathematics-I", "Physics", "Basic Electrical Engineering", "Engineering Chemistry", "Engineering Drawing"],
+      "2nd Sem": ["Mathematics-II", "Environmental Science", "Basic Electronics", "Programming in C", "Surveying"],
+      "3rd Sem": ["Structural Analysis-I", "Geotechnical Engineering-I", "Fluid Mechanics", "Building Materials", "Engineering Geology"],
+      "4th Sem": ["Structural Analysis-II", "Geotechnical Engineering-II", "Transportation Engineering", "Hydrology", "Concrete Technology"],
+      "5th Sem": ["Design of Steel Structures", "Foundation Engineering", "Environmental Engineering", "Remote Sensing", "Elective-I"],
+      "6th Sem": ["Design of Concrete Structures", "Highway Engineering", "Irrigation Engineering", "Construction Management", "Elective-II"],
+      "7th Sem": ["Earthquake Engineering", "Advanced Construction Techniques", "Project-I", "Urban Planning", "Elective-III"],
+      "8th Sem": ["Bridge Engineering", "Capstone Project", "Internship", "Seminar", "Elective-IV"]
+    }
   }
 }

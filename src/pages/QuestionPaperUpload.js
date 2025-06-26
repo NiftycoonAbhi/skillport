@@ -8,6 +8,7 @@ import subjectsByStandard from './subjectsByStandard.json';
 function UploadQuestionPaper() {
   const [standard, setStandard] = useState('');
   const [stream, setStream] = useState('');
+  const [semester, setSemester] = useState('');
   const [subject, setSubject] = useState('');
   const [title, setTitle] = useState('');
   const [pdfLink, setPdfLink] = useState('');
@@ -22,12 +23,23 @@ function UploadQuestionPaper() {
   useEffect(() => {
     const fetchPapers = async () => {
       if (!standard || !subject) return;
+      
       try {
-        const q = query(
+        let q = query(
           collection(db, 'questionPapers'),
           where('standard', '==', standard),
           where('subject', '==', subject)
         );
+
+        if (standard === 'Engineering') {
+          q = query(q, 
+            where('branch', '==', stream),
+            where('semester', '==', semester)
+          );
+        } else if (standard !== '10th') {
+          q = query(q, where('stream', '==', stream));
+        }
+
         const snapshot = await getDocs(q);
         const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
         setPapers(data);
@@ -36,14 +48,48 @@ function UploadQuestionPaper() {
         console.error(err);
       }
     };
+    
     fetchPapers();
-  }, [standard, stream, subject]);
+  }, [standard, stream, semester, subject]);
+
+  const getStreams = () => {
+    if (!standard || standard === '10th') return [];
+    const standardData = subjectsByStandard[standard];
+    if (!standardData) return [];
+    return Array.isArray(standardData) ? [] : Object.keys(standardData);
+  };
+
+  const getSemesters = () => {
+    if (standard !== 'Engineering' || !stream) return [];
+    const streamData = subjectsByStandard[standard]?.[stream];
+    if (!streamData) return [];
+    return Object.keys(streamData);
+  };
 
   const getSubjects = () => {
-    if (standard === '10th') return subjectsByStandard['10th'];
-    if (subjectsByStandard[standard] && subjectsByStandard[standard][stream]) {
-      return subjectsByStandard[standard][stream];
+    if (!standard) return [];
+    
+    // 10th standard
+    if (standard === '10th') {
+      return Array.isArray(subjectsByStandard['10th']) 
+        ? subjectsByStandard['10th'] 
+        : [];
     }
+    
+    // 11th/12th standards
+    if (standard === '11th' || standard === '12th') {
+      if (!stream) return [];
+      const streamData = subjectsByStandard[standard]?.[stream];
+      return Array.isArray(streamData) ? streamData : [];
+    }
+    
+    // Engineering
+    if (standard === 'Engineering') {
+      if (!stream || !semester) return [];
+      const semesterData = subjectsByStandard[standard]?.[stream]?.[semester];
+      return Array.isArray(semesterData) ? semesterData : [];
+    }
+    
     return [];
   };
 
@@ -56,6 +102,7 @@ function UploadQuestionPaper() {
     try {
       setUploading(true);
       setError('');
+      
       const paperData = {
         title,
         fileURL: pdfLink,
@@ -67,15 +114,34 @@ function UploadQuestionPaper() {
         createdAt: Timestamp.now(),
         createdBy: 'admin-manual',
       };
-      if (standard !== '10th') paperData.branch = stream;
+      
+      if (standard !== '10th') {
+        if (standard === 'Engineering') {
+          paperData.branch = stream;
+          paperData.semester = semester;
+        } else {
+          paperData.stream = stream;
+        }
+      }
       
       await addDoc(collection(db, 'questionPapers'), paperData);
       
-      const q = query(
+      // Refresh the papers list
+      let q = query(
         collection(db, 'questionPapers'),
         where('standard', '==', standard),
         where('subject', '==', subject)
       );
+      
+      if (standard === 'Engineering') {
+        q = query(q, 
+          where('branch', '==', stream),
+          where('semester', '==', semester)
+        );
+      } else if (standard !== '10th') {
+        q = query(q, where('stream', '==', stream));
+      }
+      
       const snapshot = await getDocs(q);
       const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
       setPapers(data);
@@ -131,8 +197,13 @@ function UploadQuestionPaper() {
                 createdBy: 'admin-csv',
               };
               
-              if (row.standard !== '10th' && row.stream) {
-                paperData.branch = row.stream;
+              if (row.standard !== '10th') {
+                if (row.standard === 'Engineering') {
+                  if (row.branch) paperData.branch = row.branch;
+                  if (row.semester) paperData.semester = row.semester;
+                } else {
+                  if (row.stream) paperData.stream = row.stream;
+                }
               }
               
               await addDoc(collection(db, 'questionPapers'), paperData);
@@ -141,11 +212,22 @@ function UploadQuestionPaper() {
             }
           }
           
-          const q = query(
+          // Refresh the papers list
+          let q = query(
             collection(db, 'questionPapers'),
             where('standard', '==', standard),
             where('subject', '==', subject)
           );
+          
+          if (standard === 'Engineering') {
+            q = query(q, 
+              where('branch', '==', stream),
+              where('semester', '==', semester)
+            );
+          } else if (standard !== '10th') {
+            q = query(q, where('stream', '==', stream));
+          }
+          
           const snapshot = await getDocs(q);
           const data = snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
           setPapers(data);
@@ -194,10 +276,15 @@ function UploadQuestionPaper() {
           <div>
             <h3 className="text-lg font-semibold mb-3 text-gray-700">Select Standard</h3>
             <div className="flex flex-wrap gap-3">
-              {Object.keys(subjectsByStandard).map(std => (
+              {['10th', '11th', '12th', 'Engineering'].map((std) => (
                 <button
                   key={std}
-                  onClick={() => { setStandard(std); setStream(''); setSubject(''); }}
+                  onClick={() => { 
+                    setStandard(std); 
+                    setStream(''); 
+                    setSemester(''); 
+                    setSubject(''); 
+                  }}
                   className={`px-5 py-2 rounded-full transition-all ${standard === std ? 
                     'bg-blue-600 text-white shadow-md' : 
                     'bg-blue-100 text-blue-800 hover:bg-blue-200'}`}
@@ -208,14 +295,20 @@ function UploadQuestionPaper() {
             </div>
           </div>
 
-          {standard && standard !== '10th' && (
+          {standard && standard !== '10th' && getStreams().length > 0 && (
             <div>
-              <h3 className="text-lg font-semibold mb-3 text-gray-700">Select Stream</h3>
+              <h3 className="text-lg font-semibold mb-3 text-gray-700">
+                {standard === 'Engineering' ? 'Select Branch' : 'Select Stream'}
+              </h3>
               <div className="flex flex-wrap gap-3">
-                {Object.keys(subjectsByStandard[standard]).map(str => (
+                {getStreams().map((str) => (
                   <button
                     key={str}
-                    onClick={() => { setStream(str); setSubject(''); }}
+                    onClick={() => { 
+                      setStream(str); 
+                      setSemester(''); 
+                      setSubject(''); 
+                    }}
                     className={`px-5 py-2 rounded-full transition-all ${stream === str ? 
                       'bg-green-600 text-white shadow-md' : 
                       'bg-green-100 text-green-800 hover:bg-green-200'}`}
@@ -227,17 +320,40 @@ function UploadQuestionPaper() {
             </div>
           )}
 
-          {((standard === '10th') || (standard && stream)) && (
+          {standard === 'Engineering' && stream && getSemesters().length > 0 && (
+            <div>
+              <h3 className="text-lg font-semibold mb-3 text-gray-700">Select Semester</h3>
+              <div className="flex flex-wrap gap-3">
+                {getSemesters().map((sem) => (
+                  <button
+                    key={sem}
+                    onClick={() => { 
+                      setSemester(sem); 
+                      setSubject(''); 
+                    }}
+                    className={`px-5 py-2 rounded-full transition-all ${semester === sem ? 
+                      'bg-purple-600 text-white shadow-md' : 
+                      'bg-purple-100 text-purple-800 hover:bg-purple-200'}`}
+                  >
+                    {sem}
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
+
+          {((standard === '10th') || (standard && stream && (standard !== 'Engineering' || semester))) && 
+            getSubjects().length > 0 && (
             <div>
               <h3 className="text-lg font-semibold mb-3 text-gray-700">Select Subject</h3>
               <div className="flex flex-wrap gap-3">
-                {getSubjects().map(sub => (
+                {getSubjects().map((sub) => (
                   <button
                     key={sub}
                     onClick={() => setSubject(sub)}
                     className={`px-5 py-2 rounded-full transition-all ${subject === sub ? 
-                      'bg-purple-600 text-white shadow-md' : 
-                      'bg-purple-100 text-purple-800 hover:bg-purple-200'}`}
+                      'bg-orange-600 text-white shadow-md' : 
+                      'bg-orange-100 text-orange-800 hover:bg-orange-200'}`}
                   >
                     {sub}
                   </button>
@@ -257,9 +373,10 @@ function UploadQuestionPaper() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">Title*</label>
                 <input
+                  type="text"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   value={title}
-                  onChange={e => setTitle(e.target.value)}
+                  onChange={(e) => setTitle(e.target.value)}
                   placeholder="e.g. Midterm Exam 2023"
                 />
               </div>
@@ -267,9 +384,10 @@ function UploadQuestionPaper() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-1">PDF URL*</label>
                 <input
+                  type="url"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   value={pdfLink}
-                  onChange={e => setPdfLink(e.target.value)}
+                  onChange={(e) => setPdfLink(e.target.value)}
                   placeholder="https://example.com/exam.pdf"
                 />
               </div>
@@ -280,7 +398,7 @@ function UploadQuestionPaper() {
                   type="number"
                   className="w-full px-4 py-2 border border-gray-300 rounded-md focus:ring-blue-500 focus:border-blue-500"
                   value={year}
-                  onChange={e => setYear(parseInt(e.target.value) || new Date().getFullYear())}
+                  onChange={(e) => setYear(parseInt(e.target.value) || new Date().getFullYear())}
                   placeholder="2023"
                 />
               </div>
@@ -301,14 +419,14 @@ function UploadQuestionPaper() {
                 <h4 className="text-lg font-semibold mb-2 text-gray-700">Bulk Upload via CSV</h4>
                 <p className="text-sm text-gray-600 mb-3">
                   Upload multiple question papers at once using a CSV file with columns: 
-                  title, pdfLink, year, standard, subject, stream (optional)
+                  title, pdfLink, year, standard, subject, {standard !== '10th' ? (standard === 'Engineering' ? 'branch, semester' : 'stream') : ''}
                 </p>
                 
                 <div className="flex items-center gap-3">
                   <input
                     type="file"
                     accept=".csv"
-                    onChange={e => setCsvFile(e.target.files[0])}
+                    onChange={(e) => setCsvFile(e.target.files?.[0] || null)}
                     className="block w-full text-sm text-gray-500
                       file:mr-4 file:py-2 file:px-4
                       file:rounded-md file:border-0
@@ -359,6 +477,9 @@ function UploadQuestionPaper() {
               <tr>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Year</th>
+                {standard === 'Engineering' && (
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Semester</th>
+                )}
                 <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
               </tr>
             </thead>
@@ -372,6 +493,11 @@ function UploadQuestionPaper() {
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                     {paper.year}
                   </td>
+                  {standard === 'Engineering' && (
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                      {paper.semester}
+                    </td>
+                  )}
                   <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <div className="flex items-center gap-3">
                       <a 

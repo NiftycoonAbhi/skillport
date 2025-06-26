@@ -8,6 +8,8 @@ function QuestionPaperList() {
   const [loading, setLoading] = useState(true);
   const [selectedStandard, setSelectedStandard] = useState('');
   const [selectedStream, setSelectedStream] = useState('');
+  const [selectedBranch, setSelectedBranch] = useState('');
+  const [selectedSemester, setSelectedSemester] = useState('');
   const [selectedSubject, setSelectedSubject] = useState('');
   const [currentlyViewingPDF, setCurrentlyViewingPDF] = useState(null);
 
@@ -34,6 +36,10 @@ function QuestionPaperList() {
       setCurrentlyViewingPDF(null);
     } else if (selectedSubject) {
       setSelectedSubject('');
+    } else if (selectedSemester) {
+      setSelectedSemester('');
+    } else if (selectedBranch && selectedStandard === 'Engineering') {
+      setSelectedBranch('');
     } else if (selectedStream) {
       setSelectedStream('');
     } else {
@@ -41,19 +47,57 @@ function QuestionPaperList() {
     }
   };
 
+  const getStreams = () => {
+    if (selectedStandard === '10th') return [];
+    if (selectedStandard === '11th' || selectedStandard === '12th') {
+      return Object.keys(subjectsByStandard[selectedStandard] || {});
+    }
+    if (selectedStandard === 'Engineering') {
+      return Object.keys(subjectsByStandard[selectedStandard] || {});
+    }
+    return [];
+  };
+
+  const getBranches = () => {
+    if (selectedStandard === 'Engineering') {
+      return Object.keys(subjectsByStandard[selectedStandard] || {});
+    }
+    return [];
+  };
+
+  const getSemesters = () => {
+    if (selectedStandard === 'Engineering' && selectedBranch) {
+      return Object.keys(subjectsByStandard[selectedStandard][selectedBranch] || []);
+    }
+    return [];
+  };
+
   const getSubjects = () => {
     if (selectedStandard === '10th') {
       return subjectsByStandard['10th'];
-    } else {
+    } else if (selectedStandard === '11th' || selectedStandard === '12th') {
       return subjectsByStandard[selectedStandard]?.[selectedStream] || [];
+    } else if (selectedStandard === 'Engineering' && selectedBranch && selectedSemester) {
+      return subjectsByStandard[selectedStandard][selectedBranch][selectedSemester] || [];
     }
+    return [];
   };
 
   const filteredPapers = questionPapers.filter((paper) => {
     if (!paper.approved) return false;
     if (paper.standard !== selectedStandard) return false;
-    if (selectedStandard !== '10th' && paper.branch !== selectedStream) return false;
-    return paper.subject?.toLowerCase() === selectedSubject.toLowerCase();
+    
+    if (selectedStandard === '10th') {
+      return paper.subject?.toLowerCase() === selectedSubject.toLowerCase();
+    } else if (selectedStandard === '11th' || selectedStandard === '12th') {
+      if (paper.branch !== selectedStream) return false;
+      return paper.subject?.toLowerCase() === selectedSubject.toLowerCase();
+    } else if (selectedStandard === 'Engineering') {
+      if (paper.branch !== selectedBranch) return false;
+      if (paper.semester !== selectedSemester) return false;
+      return paper.subject?.toLowerCase() === selectedSubject.toLowerCase();
+    }
+    return false;
   });
 
   const getPDFViewerUrl = (url) => {
@@ -110,20 +154,34 @@ function QuestionPaperList() {
         selectedStandard === '10th' ? (
           <SubjectSelectionView
             title={`Subjects - ${selectedStandard}`}
-            items={subjectsByStandard['10th']}
+            items={getSubjects()}
             onSelect={setSelectedSubject}
             onBack={handleBack}
           />
-        ) : !selectedStream ? (
+        ) : (selectedStandard === '11th' || selectedStandard === '12th') && !selectedStream ? (
           <StreamSelectionView
             standard={selectedStandard}
-            streams={Object.keys(subjectsByStandard[selectedStandard] || {})}
+            streams={getStreams()}
             onSelect={setSelectedStream}
+            onBack={handleBack}
+          />
+        ) : selectedStandard === 'Engineering' && !selectedBranch ? (
+          <BranchSelectionView
+            standard={selectedStandard}
+            branches={getBranches()}
+            onSelect={setSelectedBranch}
+            onBack={handleBack}
+          />
+        ) : selectedStandard === 'Engineering' && !selectedSemester ? (
+          <SemesterSelectionView
+            branch={selectedBranch}
+            semesters={getSemesters()}
+            onSelect={setSelectedSemester}
             onBack={handleBack}
           />
         ) : (
           <SubjectSelectionView
-            title={`Subjects - ${selectedStream} (${selectedStandard})`}
+            title={`Subjects - ${selectedStandard}${selectedBranch ? ` (${selectedBranch})` : ''}${selectedSemester ? ` - ${selectedSemester}` : ''}`}
             items={getSubjects()}
             onSelect={setSelectedSubject}
             onBack={handleBack}
@@ -135,6 +193,8 @@ function QuestionPaperList() {
           selectedSubject={selectedSubject}
           selectedStandard={selectedStandard}
           selectedStream={selectedStream}
+          selectedBranch={selectedBranch}
+          selectedSemester={selectedSemester}
           onBack={handleBack}
           onViewPDF={setCurrentlyViewingPDF}
         />
@@ -161,7 +221,7 @@ const StandardSelectionView = ({ setSelectedStandard, standards }) => (
   </div>
 );
 
-// Component for selecting stream
+// Component for selecting stream (for 11th/12th)
 const StreamSelectionView = ({ standard, streams, onSelect, onBack }) => (
   <div className="bg-white p-6 rounded-lg shadow-sm">
     <div className="flex justify-between items-center mb-4">
@@ -181,6 +241,58 @@ const StreamSelectionView = ({ standard, streams, onSelect, onBack }) => (
           className="bg-blue-50 p-6 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors border border-blue-100 text-center"
         >
           <h3 className="text-lg font-semibold text-blue-800">{stream}</h3>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// Component for selecting branch (for Engineering)
+const BranchSelectionView = ({ standard, branches, onSelect, onBack }) => (
+  <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-bold text-gray-800">Select a Branch - {standard}</h2>
+      <button 
+        onClick={onBack} 
+        className="text-blue-600 hover:text-blue-800 font-medium"
+      >
+        ← Back
+      </button>
+    </div>
+    <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+      {branches.map((branch) => (
+        <div
+          key={branch}
+          onClick={() => onSelect(branch)}
+          className="bg-blue-50 p-6 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors border border-blue-100 text-center"
+        >
+          <h3 className="text-lg font-semibold text-blue-800">{branch}</h3>
+        </div>
+      ))}
+    </div>
+  </div>
+);
+
+// Component for selecting semester (for Engineering)
+const SemesterSelectionView = ({ branch, semesters, onSelect, onBack }) => (
+  <div className="bg-white p-6 rounded-lg shadow-sm">
+    <div className="flex justify-between items-center mb-4">
+      <h2 className="text-xl font-bold text-gray-800">Select a Semester - {branch}</h2>
+      <button 
+        onClick={onBack} 
+        className="text-blue-600 hover:text-blue-800 font-medium"
+      >
+        ← Back
+      </button>
+    </div>
+    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+      {semesters.map((semester) => (
+        <div
+          key={semester}
+          onClick={() => onSelect(semester)}
+          className="bg-blue-50 p-6 rounded-lg cursor-pointer hover:bg-blue-100 transition-colors border border-blue-100 text-center"
+        >
+          <h3 className="text-lg font-semibold text-blue-800">{semester}</h3>
         </div>
       ))}
     </div>
@@ -214,12 +326,23 @@ const SubjectSelectionView = ({ title, items, onSelect, onBack }) => (
 );
 
 // Component for displaying question papers
-const QuestionPapersView = ({ papers, selectedSubject, selectedStandard, selectedStream, onBack, onViewPDF }) => (
+const QuestionPapersView = ({ 
+  papers, 
+  selectedSubject, 
+  selectedStandard,
+  selectedStream,
+  selectedBranch,
+  selectedSemester,
+  onBack, 
+  onViewPDF 
+}) => (
   <div className="bg-white p-6 rounded-lg shadow-sm">
     <div className="flex justify-between items-center mb-4">
       <h2 className="text-xl font-bold text-gray-800 capitalize">
         {selectedSubject} - {selectedStandard}
         {selectedStream && ` (${selectedStream})`}
+        {selectedBranch && ` (${selectedBranch})`}
+        {selectedSemester && ` - ${selectedSemester}`}
       </h2>
       <button 
         onClick={onBack} 
@@ -231,7 +354,7 @@ const QuestionPapersView = ({ papers, selectedSubject, selectedStandard, selecte
 
     {papers.length === 0 ? (
       <div className="bg-blue-50 p-6 rounded-lg text-center border border-blue-100">
-        <p className="text-gray-600">No question papers found for this subject.</p>
+        <p className="text-gray-600">Question paper will upload soon</p>
       </div>
     ) : (
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
