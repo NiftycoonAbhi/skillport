@@ -1,27 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { db } from '../firebase';
 import { collection, getDocs } from 'firebase/firestore';
-
-const subjectsByStandard = {
-  '10th': ['Mathematics', 'Science', 'Social Science', 'English', 'Hindi'],
-  '11th': {
-    'Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science'],
-    'Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Informatics Practices'],
-    'Arts': ['History', 'Political Science', 'Geography', 'Economics', 'Psychology'],
-  },
-  '12th': {
-    'Science': ['Physics', 'Chemistry', 'Mathematics', 'Biology', 'Computer Science'],
-    'Commerce': ['Accountancy', 'Business Studies', 'Economics', 'Mathematics', 'Informatics Practices'],
-    'Arts': ['History', 'Political Science', 'Geography', 'Economics', 'Psychology'],
-  },
-  'Engineering': {
-    'CSE': ['Data Structures', 'Algorithms', 'Computer Networks', 'DBMS', 'Operating Systems'],
-    'ECE': ['Digital Electronics', 'Signals & Systems', 'VLSI Design', 'Communication Systems'],
-    'EEE': ['Circuit Theory', 'Power Systems', 'Control Systems', 'Electrical Machines'],
-    'ME': ['Thermodynamics', 'Fluid Mechanics', 'Machine Design'],
-    'CE': ['Structural Analysis', 'Geotechnical Engineering', 'Transportation Engineering'],
-  }
-};
+import subjectsByStandard from '../pages/subjectsByStandard.json';
 
 function QuestionPaperList() {
   const [questionPapers, setQuestionPapers] = useState([]);
@@ -65,7 +45,7 @@ function QuestionPaperList() {
     if (selectedStandard === '10th') {
       return subjectsByStandard['10th'];
     } else {
-      return subjectsByStandard[selectedStandard][selectedStream] || [];
+      return subjectsByStandard[selectedStandard]?.[selectedStream] || [];
     }
   };
 
@@ -77,7 +57,6 @@ function QuestionPaperList() {
   });
 
   const getPDFViewerUrl = (url) => {
-    // This configuration will completely remove the Google Docs toolbar
     return url.replace('/view?usp=sharing', '/preview?rm=minimal&toolbar=0&navpanes=0&scrollbar=0');
   };
 
@@ -88,11 +67,6 @@ function QuestionPaperList() {
   if (currentlyViewingPDF) {
     return (
       <div className="container mx-auto px-4 py-6 bg-gray-50 min-h-screen">
-        {/* <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
-          <h1 className="text-2xl font-bold text-gray-800">SkillPort</h1>
-          <p className="text-gray-600">Student Learning Distributed</p>
-        </div> */}
-        
         <div className="bg-white rounded-lg shadow-sm p-4 mb-6">
           <button
             onClick={handleBack}
@@ -116,14 +90,6 @@ function QuestionPaperList() {
             allowFullScreen
           ></iframe>
         </div>
-{/* 
-        <div className="mt-6 bg-white p-4 rounded-lg shadow-sm">
-          <h2 className="text-lg font-semibold text-gray-800">SKILLCERTPRO</h2>
-          <p className="text-gray-600">IT CERTIFICATION TRAININGS</p>
-          <div className="mt-2 text-sm text-gray-500">
-            / Databricks / By SkillCertPro
-          </div>
-        </div> */}
       </div>
     );
   }
@@ -136,7 +102,10 @@ function QuestionPaperList() {
       </div>
 
       {!selectedStandard ? (
-        <StandardSelectionView setSelectedStandard={setSelectedStandard} />
+        <StandardSelectionView 
+          setSelectedStandard={setSelectedStandard} 
+          standards={Object.keys(subjectsByStandard)}
+        />
       ) : !selectedSubject ? (
         selectedStandard === '10th' ? (
           <SubjectSelectionView
@@ -148,7 +117,7 @@ function QuestionPaperList() {
         ) : !selectedStream ? (
           <StreamSelectionView
             standard={selectedStandard}
-            streams={Object.keys(subjectsByStandard[selectedStandard])}
+            streams={Object.keys(subjectsByStandard[selectedStandard] || {})}
             onSelect={setSelectedStream}
             onBack={handleBack}
           />
@@ -175,11 +144,11 @@ function QuestionPaperList() {
 }
 
 // Component for selecting standard
-const StandardSelectionView = ({ setSelectedStandard }) => (
+const StandardSelectionView = ({ setSelectedStandard, standards }) => (
   <div className="bg-white p-6 rounded-lg shadow-sm">
     <h2 className="text-xl font-bold mb-6 text-gray-800">Select a Standard</h2>
     <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-      {Object.keys(subjectsByStandard).map((std) => (
+      {standards.map((std) => (
         <div
           key={std}
           onClick={() => setSelectedStandard(std)}

@@ -1,0 +1,20 @@
+{
+  "10th": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+  "11th": {
+    "Science": ["Physics", "Chemistry", "Mathematics", "Biology", "Computer Science"],
+    "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices"],
+    "Arts": ["History", "Political Science", "Geography", "Economics", "Psychology"]
+  },
+  "12th": {
+    "Science": ["Physics", "Chemistry", "Mathematics", "Biology", "Computer Science"],
+    "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices"],
+    "Arts": ["History", "Political Science", "Geography", "Economics", "Psychology"]
+  },
+  "Engineering": {
+    "CSE": ["Data Structures", "Algorithms", "Computer Networks", "DBMS", "Operating Systems"],
+    "ECE": ["Digital Electronics", "Signals & Systems", "VLSI Design", "Communication Systems"],
+    "EEE": ["Circuit Theory", "Power Systems", "Control Systems", "Electrical Machines"],
+    "ME": ["Thermodynamics", "Fluid Mechanics", "Machine Design"],
+    "CE": ["Structural Analysis", "Geotechnical Engineering", "Transportation Engineering"]
+  }
+}

@@ -144,8 +144,8 @@ function Dashboard() {
         return <NoteList />;
       case "question-papers":
         return <QuestionPaperList openPdf={openPdf} />;
-      case "quiz":
-        return <QuizList openQuiz={openQuiz} />;
+      // case "quiz":
+      //   return <QuizList openQuiz={openQuiz} />;
       case "pdf-viewer":
         return (
           <div className="h-full flex flex-col bg-white rounded-xl shadow-sm p-4">
@@ -498,7 +498,7 @@ function Dashboard() {
             <span className="ml-3">Question Papers</span>
           )}
         </button>
-        <button
+        {/* <button
           className={`w-full flex items-center ${
             activeSection === "quiz"
               ? "bg-blue-100 text-blue-600"
@@ -510,7 +510,7 @@ function Dashboard() {
           {(!isSidebarCollapsed || isMobile) && (
             <span className="ml-3">Quizzes</span>
           )}
-        </button>
+        </button> */}
       </div>
 
       {(!isSidebarCollapsed || isMobile) && (
@@ -548,7 +548,7 @@ function Dashboard() {
           {activeSection === "noteseditor" && "Notes Maker"}
           {activeSection === "noteslist" && "Notes List"}
           {activeSection === "question-papers" && "Question Papers"}
-          {activeSection === "quiz" && "Quizzes"}
+          {/* {activeSection === "quiz" && "Quizzes"} */}
         </h1>
         <div className="flex items-center space-x-2">
           <div className="w-8 h-8 rounded-full bg-blue-500 flex items-center justify-center text-white text-sm font-medium">
@@ -626,17 +626,17 @@ function Dashboard() {
               {activeSection === "noteseditor" && "Notes Maker"}
               {activeSection === "noteslist" && "My Notes"}
               {activeSection === "question-papers" && "Question Papers"}
-              {activeSection === "quiz" && "Practice Quizzes"}
+              {/* {activeSection === "quiz" && "Practice Quizzes"} */}
             </h1>
           </div>
 
           <div className="flex items-center space-x-6">
-            <button className="text-gray-500 hover:text-blue-600 transition-colors relative">
+            {/* <button className="text-gray-500 hover:text-blue-600 transition-colors relative">
               <FiMessageSquare size={20} />
               <span className="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full w-4 h-4 flex items-center justify-center">
                 3
               </span>
-            </button>
+            </button> */}
 
             <div className="flex items-center space-x-3">
               <div className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white text-sm font-medium shadow-md">
