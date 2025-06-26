@@ -122,7 +122,7 @@ export default function UserOverview({ fetchData, loading }) {
         
         <div className="stats-header">
           <Text>Total Users:</Text>
-          <Text strong style={{ fontSize: 24, marginLeft: 8 }}>{users.length}</Text>
+          <Text strong style={{ fontSize: 24, marginLeft: 8 }}>{users.length-1}</Text>
         </div>
       </div>
 

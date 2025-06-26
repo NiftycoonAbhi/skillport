@@ -330,10 +330,10 @@ function Dashboard() {
       {!isMobile && !isSidebarCollapsed && (
         <div className="px-3 py-4 mb-2">
           <h2 className="text-xl font-bold text-blue-600 flex items-center">
-            <FiAward className="mr-2" /> SkillPort
+            <FiAward className="mr-2" /> JnanaSetu
           </h2>
           <p className="text-xs text-gray-500 mt-1">
-            Student Learning Dashboard
+            Bridge of Knowledge
           </p>
         </div>
       )}
@@ -341,7 +341,7 @@ function Dashboard() {
       {isMobile && (
         <div className="px-3 py-4 mb-2 border-b border-gray-200">
           <h2 className="text-xl font-bold text-blue-600 flex items-center">
-            <FiAward className="mr-2" /> SkillPort
+            <FiAward className="mr-2" /> JnanaSetu
           </h2>
           <p className="text-xs text-gray-500 mt-1">
             Student Learning Dashboard
@@ -579,7 +579,7 @@ function Dashboard() {
         <div className="p-4 border-b border-gray-200 flex items-center justify-between">
           {!isSidebarCollapsed && (
             <h2 className="text-xl font-bold text-blue-600 flex items-center">
-              <FiAward className="mr-2" /> SkillPort
+              <FiAward className="mr-2" /> JnanaSetu
             </h2>
           )}
           {isSidebarCollapsed && (
