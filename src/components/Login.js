@@ -3,9 +3,19 @@ import {
   createUserWithEmailAndPassword,
   signInWithEmailAndPassword,
   sendPasswordResetEmail,
+  fetchSignInMethodsForEmail
 } from 'firebase/auth';
 import { auth, db } from '../firebase';
-import { doc, setDoc, getDoc } from 'firebase/firestore';
+import { 
+  doc, 
+  setDoc, 
+  getDoc, 
+  collection, 
+  query, 
+  where, 
+  getDocs,
+  serverTimestamp
+} from 'firebase/firestore';
 import { useNavigate } from 'react-router-dom';
 
 function AuthForm() {
@@ -23,6 +33,7 @@ function AuthForm() {
   const [adminCode, setAdminCode] = useState('');
   const [isAdminRegistration, setIsAdminRegistration] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
+  const [userName, setUserName] = useState(''); // Added missing state
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -50,17 +61,31 @@ function AuthForm() {
       case 'auth/invalid-email':
         return 'Please enter a valid email address';
       case 'auth/user-not-found':
-        return 'Email not registered. Please create an account';
+        return 'No account found with this email. Please register first';
       case 'auth/wrong-password':
-        return 'Incorrect password. Please try again or reset your password';
+        return 'Incorrect password. Please try again';
       case 'auth/email-already-in-use':
         return 'This email is already registered. Please login instead';
       case 'auth/weak-password':
         return 'Password should be at least 6 characters';
       case 'auth/too-many-requests':
         return 'Too many attempts. Please try again later';
+      case 'auth/invalid-credential':
+        return 'Invalid email or password. Please check your credentials';
       default:
         return 'An error occurred. Please try again';
+    }
+  };
+
+  const checkEmailRegistered = async (email) => {
+    try {
+      const usersRef = collection(db, 'users');
+      const q = query(usersRef, where('email', '==', email.toLowerCase()));
+      const querySnapshot = await getDocs(q);
+      return !querySnapshot.empty;
+    } catch (error) {
+      console.error('Error checking email:', error);
+      return false;
     }
   };
 
@@ -71,6 +96,19 @@ function AuthForm() {
     
     try {
       if (isRegister) {
+        // First check if email exists in auth system
+        const methods = await fetchSignInMethodsForEmail(auth, email);
+        if (methods.length > 0) {
+          throw { code: 'auth/email-already-in-use' };
+        }
+
+        // Then check if email exists in Firestore
+        const isRegistered = await checkEmailRegistered(email);
+        if (isRegistered) {
+          throw { code: 'auth/email-already-in-use' };
+        }
+
+        // Proceed with registration
         const userCred = await createUserWithEmailAndPassword(auth, email, password);
         
         await setDoc(doc(db, 'users', userCred.user.uid), {
@@ -80,34 +118,72 @@ function AuthForm() {
           phone,
           role,
           bio,
-          email,
+          email: email.toLowerCase(),
           isAdmin: false,
-          createdAt: new Date(),
+          createdAt: serverTimestamp(),
         });
         
         alert('✅ Registered Successfully!');
         resetForm();
         setIsRegister(false);
       } else {
-        const userCred = await signInWithEmailAndPassword(auth, email, password);
-        const userDoc = await getDoc(doc(db, 'users', userCred.user.uid));
-        const userData = userDoc.data();
-        
-        if (rememberMe) {
-          localStorage.setItem('rememberedEmail', email);
-        } else {
-          localStorage.removeItem('rememberedEmail');
+        // Login logic
+        try {
+          const userCred = await signInWithEmailAndPassword(auth, email, password);
+          
+          if (rememberMe) {
+            localStorage.setItem('rememberedEmail', email);
+          } else {
+            localStorage.removeItem('rememberedEmail');
+          }
+          
+          const userDoc = await getDoc(doc(db, 'users', userCred.user.uid));
+          const userData = userDoc.data();
+          
+          navigate(userData?.isAdmin ? '/admin' : '/dashboard');
+        } catch (err) {
+          // Handle specific login errors
+          if (err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
+            const isRegistered = await checkEmailRegistered(email);
+            throw { 
+              code: isRegistered ? 'auth/wrong-password' : 'auth/user-not-found' 
+            };
+          }
+          throw err;
         }
-        
-        navigate(userData?.isAdmin ? '/admin' : '/dashboard');
       }
     } catch (err) {
+      console.error('Auth error:', err);
       setError(getFriendlyErrorMessage(err.code));
     } finally {
       setIsLoading(false);
     }
   };
 
+  const fetchOrCreateUser = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
+
+      const userRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userRef);
+
+      if (docSnap.exists()) {
+        setUserName(docSnap.data().firstName || "");
+      } else {
+        console.log("Creating new user document...");
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          firstName: "",
+          lastName: "",
+          createdAt: serverTimestamp()
+        });
+      }
+    } catch (error) {
+      console.error("Error handling user data:", error);
+    }
+  };
   const handleAdminRegistration = async (e) => {
     e.preventDefault();
     setIsLoading(true);
@@ -160,7 +236,7 @@ function AuthForm() {
     }
   };
 
-  return (
+ return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100 p-4 sm:p-6">
       <div className="w-full max-w-6xl bg-white rounded-lg shadow-md overflow-hidden">
         <div className="flex flex-col md:flex-row">
@@ -170,12 +246,11 @@ function AuthForm() {
               <img 
                 src="https://cdn-icons-png.flaticon.com/512/3135/3135715.png" 
                 className="w-24 h-24 mx-auto mb-6" 
-                alt="SkillPort Logo"
+                alt="App Logo"
               />
-              <h2 className="text-3xl font-bold mb-4">Welcome to SkillPort</h2>
+              <h2 className="text-3xl font-bold mb-4">Welcome to JnanaSetu</h2>
               <p className="text-blue-100 max-w-md mx-auto">
-                Create and manage your profile, certificates, and projects with ease. 
-                Get started in minutes.
+                Create and manage your profile with ease. Get started in minutes.
               </p>
             </div>
           </div>
@@ -185,7 +260,7 @@ function AuthForm() {
             <div className="mb-6 text-center">
               <h2 className="text-2xl font-bold text-gray-800">
                 {isAdminRegistration ? 'Admin Registration' : 
-                 isRegister ? 'Create an Account' : 'Login to SkillPort'}
+                 isRegister ? 'Create an Account' : 'Login'}
               </h2>
               <p className="text-gray-600 mt-2">
                 {isAdminRegistration ? 'Register as an administrator' : 
@@ -195,7 +270,7 @@ function AuthForm() {
 
             {error && (
               <div className={`mb-4 p-3 rounded text-sm ${
-                error.includes('not registered') || error.includes('Incorrect password') ? 
+                error.includes('not registered') || error.includes('No account found') ? 
                 'bg-yellow-50 text-yellow-700' : 'bg-red-50 text-red-600'
               }`}>
                 {error}
@@ -224,7 +299,7 @@ function AuthForm() {
             <form 
               onSubmit={isAdminRegistration ? handleAdminRegistration : handleSubmit} 
               className="space-y-4"
-            >              {(isRegister || isAdminRegistration) && (
+            >             {(isRegister || isAdminRegistration) && (
                 <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
                   <div>
                     <label className="block text-sm font-medium text-gray-700 mb-1">

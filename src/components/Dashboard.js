@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { FiActivity } from 'react-icons/fi';
-import { doc, getDoc } from 'firebase/firestore';
+import { doc, getDoc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { db, auth } from '../firebase'; // adjust path as needed
 import { useNavigate } from "react-router-dom";
 import AddCertificate from "./AddCertificate";
@@ -52,28 +52,35 @@ function Dashboard() {
   const [currentPdf, setCurrentPdf] = useState(null);
   const [currentQuizLink, setCurrentQuizLink] = useState(null);
 
-  useEffect(() => {
-    const fetchUserName = async () => {
-      try {
-        const user = auth.currentUser;
-        if (!user) return;
+useEffect(() => {
+  const fetchOrCreateUser = async () => {
+    try {
+      const user = auth.currentUser;
+      if (!user) return;
 
-        const docRef = doc(db, 'users', user.uid);
-        const docSnap = await getDoc(docRef);
+      const userRef = doc(db, 'users', user.uid);
+      const docSnap = await getDoc(userRef);
 
-        if (docSnap.exists()) {
-          const data = docSnap.data();
-          setUserName(data.firstName || "");
-        } else {
-          console.log("No such user!");
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
+      if (docSnap.exists()) {
+        setUserName(docSnap.data().firstName || "");
+      } else {
+        console.log("Creating new user document...");
+        await setDoc(userRef, {
+          uid: user.uid,
+          email: user.email,
+          firstName: "",
+          lastName: "",
+          createdAt: serverTimestamp()  // Now properly imported
+        });
       }
-    };
+    } catch (error) {
+      console.error("Error handling user data:", error);
+    }
+  };
 
-    fetchUserName();
-  }, []);
+  const unsubscribe = auth.onAuthStateChanged(fetchOrCreateUser);
+  return () => unsubscribe();
+}, []);
 
 
   useEffect(() => {
