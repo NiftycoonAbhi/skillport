@@ -1,4 +1,3 @@
-// src/App.js
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import Home from './components/Home';
@@ -13,23 +12,29 @@ import StudyPlanner from './components/StudyPlanner';
 import NoteEditor from './components/NoteEditor';
 import NotesList from './components/NotesList';
 import AdminDashboard from './pages/AdminDashboard';
+import ChatbotDoubtSolver from './components/ChatbotDoubtSolver'; // ✅ Import the chatbot
+
 function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/add-certificate" element={<AddCertificate />} />
-        <Route path="/add-project" element={<AddProject />} />
-        <Route path="/projects" element={<ProjectList />} />
-        <Route path="/certificates" element={<CertificateList />} />
-        <Route path="/studyplanner" element={<StudyPlanner />} />
-        <Route path="/noteseditor" element={<NoteEditor />} />
-        <Route path="/noteslist" element={<NotesList />} />
-        <Route path="/admin" element={<AdminDashboard />} />
-      </Routes>
+      <>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/login" element={<Login />} />
+          <Route path="/register" element={<Register />} />
+          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/add-certificate" element={<AddCertificate />} />
+          <Route path="/add-project" element={<AddProject />} />
+          <Route path="/projects" element={<ProjectList />} />
+          <Route path="/certificates" element={<CertificateList />} />
+          <Route path="/studyplanner" element={<StudyPlanner />} />
+          <Route path="/noteseditor" element={<NoteEditor />} />
+          <Route path="/noteslist" element={<NotesList />} />
+          <Route path="/admin" element={<AdminDashboard />} />
+        </Routes>
+
+        <ChatbotDoubtSolver /> {/* ✅ Chatbot always visible */}
+      </>
     </Router>
   );
 }

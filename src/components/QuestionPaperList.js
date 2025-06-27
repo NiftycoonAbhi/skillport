@@ -141,7 +141,7 @@ function QuestionPaperList() {
   return (
     <div className="container mx-auto px-4 py-6 bg-gray-50 min-h-screen">
       <div className="mb-6 bg-white p-4 rounded-lg shadow-sm">
-        <h1 className="text-2xl font-bold text-gray-800">SkillPort</h1>
+        <h1 className="text-2xl font-bold text-gray-800">JnanaSetu</h1>
         <p className="text-gray-600">Student Learning Distributed</p>
       </div>
 
