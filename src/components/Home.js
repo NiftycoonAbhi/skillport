@@ -1,109 +1,366 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-function Home() {
+function HeroSection() {
   const navigate = useNavigate();
+  const [activeTab, setActiveTab] = useState('certificates');
 
   return (
-    <div className="min-h-screen bg-gradient-to-tr from-white via-blue-50 to-blue-100 flex flex-col">
-      
-      {/* Top Navbar */}
-      <header className="w-full px-4 md:px-8 py-4 flex justify-between items-center bg-white shadow-sm border-b">
-        <h1 className="text-2xl md:text-3xl font-bold text-blue-700 tracking-tight">
-          JnanaSetu<span className="text-indigo-500">.</span>
-        </h1>
-        <div className="space-x-2 md:space-x-4">
+    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-50">
+      {/* Header with Logo */}
+      <header className="w-full px-6 py-4 flex justify-between items-center bg-white/80 backdrop-blur-sm shadow-sm">
+        <div className="flex items-center">
+          {/* Logo placeholder - replace with your actual logo */}
+          <div className="flex-1 flex justify-center">
+              <img
+                src="/images/logo.jpg"
+                alt="JnanaSetu"
+                className="w-20 h-20 object-contain transition-transform duration-500 hover:scale-105"
+              />
+            </div>
+          <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+            JnanaSetu
+          </h1>
+        </div>
+        <div className="flex space-x-3">
           <button
             onClick={() => navigate('/login')}
-            className="px-4 md:px-5 py-2 text-sm font-medium bg-blue-600 text-white rounded hover:bg-blue-700 transition"
+            className="px-4 py-2 text-sm font-medium text-blue-600 hover:text-blue-800 transition-colors"
           >
-            Login
-          </button>
-          <button
-            onClick={() => navigate('/register')}
-            className="px-4 md:px-5 py-2 text-sm font-medium bg-green-600 text-white rounded hover:bg-green-700 transition"
-          >
-            Register
+            Get Started
           </button>
         </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="flex flex-col-reverse md:flex-row items-center justify-between px-4 md:px-16 py-10 md:py-20 flex-1 w-full max-w-7xl mx-auto gap-12">
-        {/* Text Content */}
-        <div className="w-full md:w-1/2 text-center md:text-left">
-          <h2 className="text-3xl sm:text-4xl md:text-5xl font-extrabold text-blue-800 leading-snug mb-4">
-            Build a Digital Portfolio <br className="hidden sm:inline" /> and Let Your Skills Shine
-          </h2>
-          <p className="text-base sm:text-lg text-gray-700 mb-6 leading-relaxed">
-            JnanaSetu empowers you to showcase your certificates, projects, and achievements — all in one beautifully organized profile.
+      {/* Hero Content */}
+    <section className="relative max-w-7xl mx-auto px-6 py-16 md:py-24">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+        {/* Left content */}
+        <div className="text-center lg:text-left">
+          <h1 className="text-4xl md:text-5xl lg:text-6xl font-extrabold tracking-tight text-gray-900">
+            <span className="block">Your Complete</span>
+            <span className="block bg-gradient-to-r from-blue-600 to-indigo-600 bg-clip-text text-transparent">
+              Academic Portfolio
+            </span>
+          </h1>
+          
+          <p className="mt-6 text-lg md:text-xl text-gray-600 max-w-2xl">
+            Showcase your certificates, projects, and achievements with JnanaSetu's all-in-one student platform.
           </p>
-          <button
-            onClick={() => navigate('/register')}
-            className="px-6 sm:px-8 py-3 bg-indigo-600 text-white font-semibold rounded-full text-base sm:text-lg hover:bg-indigo-700 shadow transition"
-          >
-            Get Started Now
-          </button>
+
+          {/* Feature highlights */}
+          <div className="mt-8 space-y-4">
+            <div className="flex items-center">
+              <div className="flex-shrink-0 bg-blue-100 p-2 rounded-lg mr-4">
+                <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                </svg>
+              </div>
+              <span className="text-gray-700">Digitally store and showcase all your certificates</span>
+            </div>
+            {/* <div className="flex items-center">
+              <div className="flex-shrink-0 bg-indigo-100 p-2 rounded-lg mr-4">
+                <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                </svg>
+              </div>
+              <span className="text-gray-700">Build an impressive project portfolio</span>
+            </div> */}
+            <div className="flex items-center">
+              <div className="flex-shrink-0 bg-green-100 p-2 rounded-lg mr-4">
+                <svg className="w-6 h-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                </svg>
+              </div>
+              <span className="text-gray-700">Organize your study notes and materials</span>
+            </div>
+          </div>
+
+          <div className="mt-10 flex flex-col sm:flex-row gap-4 justify-center lg:justify-start">
+            <button
+              onClick={() => navigate('/register')}
+              className="px-6 py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition-colors shadow-lg flex items-center justify-center"
+            >
+              <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+              </svg>
+              Create Your Account
+            </button>
+            <button
+              onClick={() => navigate('/login')}
+              className="px-6 py-3 border-2 border-blue-600 text-blue-600 font-medium rounded-lg hover:bg-blue-50 transition-colors flex items-center justify-center"
+            >
+              {/* <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+              </svg> */}
+             Login
+            </button>
+          </div>
         </div>
 
-        {/* Image / Illustration */}
-        <div className="w-full md:w-1/2 flex justify-center">
-          <img
-            src="images/home.jpeg"
-            alt="Illustration of developer"
-            className="rounded-full w-60 sm:w-72 md:w-80 h-60 sm:h-72 md:h-80 object-cover shadow-lg border-4 border-white"
-          />
+        {/* Right content - Interactive preview */}
+        <div className="relative flex justify-center">
+          <div className="relative w-full max-w-lg">
+            {/* Tabbed interface preview */}
+            <div className="bg-white rounded-xl shadow-xl overflow-hidden border border-gray-200">
+              {/* Tabs */}
+              <div className="flex border-b border-gray-200">
+                <button 
+                  onClick={() => setActiveTab('certificates')}
+                  className={`px-4 py-3 text-sm font-medium ${activeTab === 'certificates' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Certificates
+                </button>
+                <button 
+                  onClick={() => setActiveTab('projects')}
+                  className={`px-4 py-3 text-sm font-medium ${activeTab === 'projects' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Projects
+                </button>
+                <button 
+                  onClick={() => setActiveTab('notes')}
+                  className={`px-4 py-3 text-sm font-medium ${activeTab === 'notes' ? 'text-blue-600 border-b-2 border-blue-600' : 'text-gray-500 hover:text-gray-700'}`}
+                >
+                  Notes
+                </button>
+              </div>
+              
+              {/* Certificates Tab Content */}
+              {activeTab === 'certificates' && (
+                <div className="p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-medium text-gray-900">Your Certificates</h3>
+                    {/* <button 
+                      onClick={() => navigate('/add-certificate')}
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      Add New
+                    </button> */}
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="bg-blue-100 p-2 rounded-lg mr-3">
+                        <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">AWS Certified Developer</h4>
+                        <p className="text-sm text-gray-500">Issued: May 2023</p>
+                      </div>
+                      {/* <button 
+                        onClick={() => navigate('/certificate-list')}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                      </button> */}
+                    </div>
+                    
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="bg-green-100 p-2 rounded-lg mr-3">
+                        <svg className="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"></path>
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">Google Data Analytics</h4>
+                        <p className="text-sm text-gray-500">Issued: March 2023</p>
+                      </div>
+                      {/* <button 
+                        onClick={() => navigate('/certificate-list')}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                      </button> */}
+                    </div>
+                  </div>
+                  
+                  {/* <button 
+                    onClick={() => navigate('/add-certificate')}
+                    className="mt-4 w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors flex items-center justify-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Add Certificate
+                  </button> */}
+                </div>
+              )}
+
+              {/* Projects Tab Content */}
+              {activeTab === 'projects' && (
+                <div className="p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-medium text-gray-900">Your Projects</h3>
+                    {/* <button 
+                      onClick={() => navigate('/add-project')}
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      Add New
+                    </button> */}
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="bg-indigo-100 p-2 rounded-lg mr-3">
+                        <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">E-commerce Platform</h4>
+                        <p className="text-sm text-gray-500">React, Node.js, MongoDB</p>
+                      </div>
+                      {/* <button 
+                        onClick={() => navigate('/project-list')}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                      </button> */}
+                    </div>
+                    
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="bg-purple-100 p-2 rounded-lg mr-3">
+                        <svg className="w-5 h-5 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 11H5m14 0a2 2 0 012 2v6a2 2 0 01-2 2H5a2 2 0 01-2-2v-6a2 2 0 012-2m14 0V9a2 2 0 00-2-2M5 11V9a2 2 0 012-2m0 0V5a2 2 0 012-2h6a2 2 0 012 2v2M7 7h10"></path>
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">Student Management System</h4>
+                        <p className="text-sm text-gray-500">Django, PostgreSQL</p>
+                      </div>
+                      {/* <button 
+                        onClick={() => navigate('/project-list')}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                      </button> */}
+                    </div>
+                  </div>
+{/*                   
+                  <button 
+                    onClick={() => navigate('/add-project')}
+                    className="mt-4 w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors flex items-center justify-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Add Project
+                  </button> */}
+                </div>
+              )}
+
+              {/* Notes Tab Content */}
+              {activeTab === 'notes' && (
+                <div className="p-4">
+                  <div className="flex justify-between items-center mb-4">
+                    <h3 className="font-medium text-gray-900">Your Notes</h3>
+                    {/* <button 
+                      onClick={() => navigate('/note-editor')}
+                      className="text-sm text-blue-600 hover:text-blue-800 flex items-center"
+                    >
+                      <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                      </svg>
+                      Add New
+                    </button> */}
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="bg-yellow-100 p-2 rounded-lg mr-3">
+                        <svg className="w-5 h-5 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">Data Structures Algorithms</h4>
+                        <p className="text-sm text-gray-500">Last updated: 2 days ago</p>
+                      </div>
+                      {/* <button 
+                        onClick={() => navigate('/notes-list')}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                      </button> */}
+                    </div>
+                    
+                    <div className="flex items-center p-3 bg-gray-50 rounded-lg border border-gray-200">
+                      <div className="bg-red-100 p-2 rounded-lg mr-3">
+                        <svg className="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path>
+                        </svg>
+                      </div>
+                      <div className="flex-1">
+                        <h4 className="font-medium text-gray-900">Database Systems</h4>
+                        <p className="text-sm text-gray-500">Last updated: 1 week ago</p>
+                      </div>
+                      {/* <button 
+                        onClick={() => navigate('/notes-list')}
+                        className="text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
+                        </svg>
+                      </button> */}
+                    </div>
+                  </div>
+{/*                   
+                  <button 
+                    onClick={() => navigate('/note-editor')}
+                    className="mt-4 w-full py-2 border-2 border-dashed border-gray-300 rounded-lg text-gray-500 hover:text-gray-700 hover:border-gray-400 transition-colors flex items-center justify-center"
+                  >
+                    <svg className="w-5 h-5 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"></path>
+                    </svg>
+                    Add Note
+                  </button> */}
+                </div>
+              )}
+            </div>
+            
+            {/* Floating element */}
+            <div className="absolute -bottom-6 -right-6 bg-white p-3 rounded-lg shadow-md border border-gray-200">
+              <div className="flex items-center">
+                <div className="bg-blue-100 p-2 rounded-lg mr-2">
+                  <svg className="w-5 h-5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+                  </svg>
+                </div>
+                <span className="text-sm font-medium">3 new career opportunities</span>
+              </div>
+            </div>
+          </div>
         </div>
-      </main>
-
-      {/* Footer */}
-     <footer className="bg-gray-50">
-  <div className="max-w-7xl mx-auto px-4 py-8">
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-      {/* Copyright section */}
-      <div className="flex flex-col items-center md:items-start">
-        <p className="text-sm text-gray-500">
-          © {new Date().getFullYear()} JnanaSetu. All rights reserved.
-        </p>
       </div>
-
-      {/* Contact section */}
-      <div className="flex flex-col items-center">
-        <div className="flex items-center space-x-4">
-          <a href="mailto:quantumgarden1@gmail.com" aria-label="Email">
-            <svg className="w-5 h-5 text-gray-500 hover:text-blue-500 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 4l-8 5-8-5V6l8 5 8-5v2z"/>
-            </svg>
-          </a>
-          <a href="tel:+91 9591585862" aria-label="Phone">
-            <svg className="w-5 h-5 text-gray-500 hover:text-green-500 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M20.01 15.38c-1.23 0-2.42-.2-3.53-.56-.35-.12-.74-.03-1.01.24l-1.57 1.97c-2.83-1.35-5.48-3.9-6.89-6.83l1.95-1.66c.27-.28.35-.67.24-1.02-.37-1.11-.56-2.3-.56-3.53 0-.54-.45-.99-.99-.99H4.19C3.65 3 3 3.24 3 3.99 3 13.28 10.73 21 20.01 21c.71 0 .99-.63.99-1.18v-3.45c0-.54-.45-.99-.99-.99z"/>
-            </svg>
-          </a>
-          {/* <a href="https://www.linkedin.com/in/abhilashbadiger/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn">
-            <svg className="w-5 h-5 text-gray-500 hover:text-blue-600 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
-            </svg>
-          </a> */}
-          {/* <a href="https://github.com/yourusername" target="_blank" rel="noopener noreferrer" aria-label="GitHub">
-            <svg className="w-5 h-5 text-gray-500 hover:text-gray-900 transition-colors" fill="currentColor" viewBox="0 0 24 24">
-              <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
-            </svg>
-          </a> */}
-        </div>
-      </div>
-
-      {/* Developer credit */}
-      <div className="flex flex-col items-center md:items-end">
-        <p className="text-sm text-gray-500">
-          Developed by <span className="font-medium">Quantum Garden</span>
-        </p>
-      </div>
-    </div>
-  </div>
-</footer>
+    </section>
     </div>
   );
 }
 
-export default Home;
+export default HeroSection;
+

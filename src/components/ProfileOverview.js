@@ -1,7 +1,7 @@
 // src/components/ProfileOverview.js
 import React, { useState, useEffect } from 'react';
 import { auth, db } from '../firebase';
-import { updateProfile, updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
+import { updateProfile, sendEmailVerification ,updateEmail, updatePassword, reauthenticateWithCredential, EmailAuthProvider } from 'firebase/auth';
 import { doc, getDoc, setDoc } from 'firebase/firestore';
 import { FiUser, FiMail, FiEdit2, FiSave, FiX, FiLock, FiShield, FiKey } from 'react-icons/fi';
 
@@ -26,6 +26,21 @@ const ProfileOverview = () => {
   });
   const [passwordErrors, setPasswordErrors] = useState({});
 
+
+  useEffect(() => {
+  const checkEmailVerification = async () => {
+    // Check if user just verified their email
+    const urlParams = new URLSearchParams(window.location.search);
+    if (urlParams.get('verifyEmail') === 'true' && auth.currentUser) {
+      await auth.currentUser.reload();
+      setUser(auth.currentUser);
+      setSuccessMessage('Email verified successfully!');
+      setTimeout(() => setSuccessMessage(''), 3000);
+    }
+  };
+  
+  checkEmailVerification();
+}, []);
   useEffect(() => {
     const unsubscribe = auth.onAuthStateChanged(async (currentUser) => {
       if (currentUser) {
@@ -113,54 +128,64 @@ const ProfileOverview = () => {
     return Object.keys(newErrors).length === 0;
   };
 
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-    if (!validateForm()) return;
+ const handleSubmit = async (e) => {
+  e.preventDefault();
+  if (!validateForm()) return;
 
-    try {
-      setLoading(true);
-      const userRef = doc(db, 'users', auth.currentUser.uid);
-      const promises = [];
-      
-      // Update Auth profile if name changed
-      if (user.displayName !== formData.displayName || user.photoURL !== formData.photoURL) {
-        promises.push(updateProfile(auth.currentUser, {
-          displayName: formData.displayName,
-          photoURL: formData.photoURL || null
-        }));
-      }
-
-      // Update email if changed
-      if (user.email !== formData.email) {
-        promises.push(updateEmail(auth.currentUser, formData.email));
-      }
-
-      // Update Firestore document
-      promises.push(setDoc(userRef, {
+  try {
+    setLoading(true);
+    const userRef = doc(db, 'users', auth.currentUser.uid);
+    const promises = [];
+    
+    // Update Auth profile if name changed
+    if (user.displayName !== formData.displayName || user.photoURL !== formData.photoURL) {
+      promises.push(updateProfile(auth.currentUser, {
         displayName: formData.displayName,
-        email: formData.email,
-        photoURL: formData.photoURL,
-        bio: formData.bio,
-        phone: formData.phone,
-        lastUpdated: new Date()
-      }, { merge: true }));
+        photoURL: formData.photoURL || null
+      }));
+    }
 
-      await Promise.all(promises);
+    // Update Firestore document (without waiting for email verification)
+    promises.push(setDoc(userRef, {
+      displayName: formData.displayName,
+      email: formData.email, // Store new email in Firestore (but auth email not updated yet)
+      photoURL: formData.photoURL,
+      bio: formData.bio,
+      phone: formData.phone,
+      lastUpdated: new Date()
+    }, { merge: true }));
+
+    // Handle email change separately
+    if (user.email !== formData.email) {
+      // Send verification email to the new address
+      await sendEmailVerification(auth.currentUser, {
+        url: `${window.location.origin}/profile?verifyEmail=true`, // Redirect after verification
+        handleCodeInApp: true
+      });
       
+      // Inform user they need to verify the new email
+      setSuccessMessage(`Verification email sent to ${formData.email}. Please verify your new email address before it will be updated.`);
+      setTimeout(() => setSuccessMessage(''), 5000);
+    }
+
+    await Promise.all(promises);
+    
+    if (user.email === formData.email) {
       setSuccessMessage('Profile updated successfully!');
       setTimeout(() => setSuccessMessage(''), 3000);
-      setIsEditing(false);
-      setUser(auth.currentUser);
-    } catch (error) {
-      console.error('Error updating profile:', error);
-      setErrors({
-        general: error.message || 'Failed to update profile. Please try again.'
-      });
-    } finally {
-      setLoading(false);
     }
-  };
-
+    
+    setIsEditing(false);
+    setUser(auth.currentUser);
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    setErrors({
+      general: error.message || 'Failed to update profile. Please try again.'
+    });
+  } finally {
+    setLoading(false);
+  }
+};
   const handlePasswordSubmit = async (e) => {
     e.preventDefault();
     if (!validatePasswordForm()) return;
