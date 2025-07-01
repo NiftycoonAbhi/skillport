@@ -100,9 +100,11 @@ function QuestionPaperList() {
     return false;
   });
 
-  const getPDFViewerUrl = (url) => {
-    return url.replace('/view?usp=sharing', '/preview?rm=minimal&toolbar=0&navpanes=0&scrollbar=0');
-  };
+const getPDFViewerUrl = (filePath) => {
+  return `/pdfjs/web/viewer.html?file=${filePath}`;
+};
+
+
 
   if (loading) {
     return <div className="text-center py-8">Loading question papers...</div>;
@@ -127,12 +129,12 @@ function QuestionPaperList() {
 
         <div className="w-full h-[75vh] bg-white rounded-lg overflow-hidden shadow-lg border border-gray-200">
           <iframe
-            src={getPDFViewerUrl(currentlyViewingPDF)}
-            title="PDF Viewer"
-            className="w-full h-full"
-            frameBorder="0"
-            allowFullScreen
-          ></iframe>
+  src={getPDFViewerUrl(currentlyViewingPDF)}
+  title="PDF Viewer"
+  className="w-full h-screen"
+  allowFullScreen
+></iframe>
+
         </div>
       </div>
     );
