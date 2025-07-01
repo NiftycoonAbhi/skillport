@@ -6,7 +6,8 @@ import {
   BookOutlined,
   MenuFoldOutlined,
   MenuUnfoldOutlined,
-  TeamOutlined
+  TeamOutlined,
+  UploadOutlined
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
@@ -16,6 +17,7 @@ const RESOURCE_TYPES = {
   QUESTION_PAPERS: "questionPapers",
   SUBJECTS: "subjects",
   JOBS: "jobs",
+  CERTIFICATES: "certificates"
 };
 
 const Sidebar = ({ activeTab, onChangeTab, collapsed, toggleCollapse }) => {
@@ -24,22 +26,27 @@ const Sidebar = ({ activeTab, onChangeTab, collapsed, toggleCollapse }) => {
     {
       key: RESOURCE_TYPES.USERS,
       icon: <UserOutlined />,
-      label: !collapsed ? 'User Management' : null,
+      label: 'User Management',
     },
     {
       key: RESOURCE_TYPES.SUBJECTS,
       icon: <BookOutlined />,
-      label: !collapsed ? 'Subject Management' : null,
+      label: 'Subject Management',
     },
     {
       key: RESOURCE_TYPES.QUESTION_PAPERS,
       icon: <FileTextOutlined />,
-      label: !collapsed ? 'Question Papers' : null,
+      label: 'Question Papers',
     },
     {
       key: RESOURCE_TYPES.JOBS,
       icon: <TeamOutlined />,
-      label: !collapsed ? 'Jobs Management' : null,
+      label: 'Jobs Management',
+    },
+    {
+      key: RESOURCE_TYPES.CERTIFICATES,
+      icon: <UploadOutlined />,
+      label: 'Certificate Management',
     }
   ];
 
@@ -48,24 +55,34 @@ const Sidebar = ({ activeTab, onChangeTab, collapsed, toggleCollapse }) => {
       collapsible
       collapsed={collapsed}
       trigger={null}
-      width={200}
+      width={250}
       className="site-layout-background"
       breakpoint="lg"
-      collapsedWidth="80"
+      collapsedWidth={80}
+      theme="light"
     >
       <div className="flex items-center justify-between px-4 py-3 bg-white border-b border-gray-200">
-        {!collapsed && <span className="font-semibold text-blue-600">Admin</span>}
-        <span onClick={toggleCollapse} className="cursor-pointer text-xl">
+        {!collapsed && (
+          <span className="font-semibold text-blue-600 text-lg">Admin Panel</span>
+        )}
+        <span 
+          onClick={toggleCollapse} 
+          className="cursor-pointer text-gray-600 hover:text-blue-500 transition-colors"
+        >
           {collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         </span>
       </div>
 
       <Menu
+        theme="light"
         mode="inline"
         selectedKeys={[activeTab]}
-        onClick={(e) => onChangeTab(e.key)}
-        style={{ height: '100%', borderRight: 0 }}
-        items={menuItems} // Using the new items prop instead of children
+        onClick={({ key }) => onChangeTab(key)}
+        style={{ height: 'calc(100% - 48px)', borderRight: 0 }}
+        items={menuItems.map(item => ({
+          ...item,
+          label: collapsed ? null : item.label,
+        }))}
       />
     </Sider>
   );

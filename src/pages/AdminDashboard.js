@@ -7,6 +7,7 @@ import {
   Button,
   message,
   Divider,
+  Space,
 } from "antd";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
@@ -16,7 +17,8 @@ import {
   UserOutlined, 
   FileTextOutlined, 
   BookOutlined,
-  TeamOutlined // Using TeamOutlined as alternative to BriefcaseOutlined
+  TeamOutlined,
+  UploadOutlined
 } from "@ant-design/icons";
 
 import Sidebar from "../components/Sidebar";
@@ -24,6 +26,7 @@ import UserOverview from "./UserOverview";
 import QuestionPaperUpload from "./QuestionPaperUpload";
 import EditSubjects from "./EditSubjects";
 import AdminJobsManagement from "./AdminJobsManagement";
+import UploadCertificate from "./UploadCertificate";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -33,6 +36,7 @@ const RESOURCE_TYPES = {
   QUESTION_PAPERS: "questionPapers",
   SUBJECTS: "subjects",
   JOBS: "jobs",
+  CERTIFICATES: "certificates", // Changed to plural for consistency
 };
 
 const menuItems = [
@@ -53,8 +57,13 @@ const menuItems = [
   },
   {
     key: RESOURCE_TYPES.JOBS,
-    icon: <FileTextOutlined />, // Changed to TeamOutlined
+    icon: <TeamOutlined />,
     label: "Jobs Management",
+  },
+  {
+    key: RESOURCE_TYPES.CERTIFICATES,
+    icon: <UploadOutlined />,
+    label: "Certificate Management",
   },
 ];
 
@@ -66,7 +75,8 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState({ 
     users: true, 
     questionPapers: true,
-    jobs: true 
+    jobs: true,
+    certificates: true 
   });
   const [error, setError] = useState(null);
   const [selectedStandard, setSelectedStandard] = useState(null);
@@ -182,9 +192,11 @@ export default function AdminDashboard() {
 
       <Layout style={{ padding: "0 24px 24px" }}>
         <Header style={{ background: "#fff", padding: 16 }}>
-          <Title level={3} className="m-0">
-            Admin Dashboard
-          </Title>
+          <Space style={{ display: 'flex', justifyContent: 'space-between', width: '100%' }}>
+            <Title level={3} className="m-0">
+              Admin Dashboard
+            </Title>
+          </Space>
         </Header>
         
         <Content style={{ margin: "24px 0", overflowY: "auto" }}>
@@ -212,6 +224,10 @@ export default function AdminDashboard() {
             <AdminJobsManagement 
               onSuccess={() => fetchData(RESOURCE_TYPES.JOBS)}
             />
+          )}
+          
+          {activeTab === RESOURCE_TYPES.CERTIFICATES && (
+            <UploadCertificate />
           )}
         </Content>
       </Layout>

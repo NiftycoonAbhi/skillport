@@ -1,0 +1,29 @@
+{
+  "certificates": [
+    {
+      "title": "AWS Certified Solutions Architect - Associate",
+      "organization": "Amazon Web Services",
+      "link": "https://aws.amazon.com/certification/certified-solutions-architect-associate/"
+    },
+    {
+      "title": "Google Cloud Professional Data Engineer",
+      "organization": "Google Cloud",
+      "link": "https://cloud.google.com/certification/data-engineer"
+    },
+    {
+      "title": "Microsoft Certified: Azure Administrator Associate",
+      "organization": "Microsoft",
+      "link": "https://learn.microsoft.com/en-us/certifications/azure-administrator/"
+    },
+    {
+      "title": "Certified Kubernetes Administrator (CKA)",
+      "organization": "Cloud Native Computing Foundation",
+      "link": "https://www.cncf.io/certification/cka/"
+    },
+    {
+      "title": "CompTIA Security+",
+      "organization": "CompTIA",
+      "link": "https://www.comptia.org/certifications/security"
+    }
+  ]
+}
