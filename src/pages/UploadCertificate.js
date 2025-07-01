@@ -1,114 +1,48 @@
 import React, { useState, useEffect } from 'react';
 import { FiUpload, FiSave, FiPlus, FiX, FiAward, FiLink, FiTag, FiDownload } from 'react-icons/fi';
-import certificatesData from '../data/certificates.json'; // Import the JSON file
+import { db } from '../firebase'; // Import your Firebase configuration
+import { collection, getDocs, addDoc, deleteDoc, doc } from 'firebase/firestore';
 
 function UploadCertificate() {
   const [certificates, setCertificates] = useState([]);
   const [newCertificate, setNewCertificate] = useState({
     title: '',
     organization: '',
-    link: ''
+    link: '',
+    date: new Date().toISOString().split('T')[0]
   });
   const [message, setMessage] = useState({ text: '', type: '' });
   const [isEditing, setIsEditing] = useState(false);
-  const [isFileLoading, setIsFileLoading] = useState(false);
-  const [fileName, setFileName] = useState('');
+  const [isLoading, setIsLoading] = useState(false);
 
-  // Load certificates from imported JSON file on first render
+  // Reference to the certificates collection in Firestore
+  const certificatesCollectionRef = collection(db, 'certificates');
+
+  // Load certificates from Firestore on component mount
   useEffect(() => {
-    try {
-      if (certificatesData && certificatesData.certificates) {
-        setCertificates(certificatesData.certificates);
-        setMessage({ text: 'Sample certificates loaded!', type: 'success' });
-      } else {
-        throw new Error('Invalid certificates data structure');
-      }
-    } catch (error) {
-      console.error('Error loading certificates:', error);
-      setMessage({ 
-        text: 'Failed to load sample certificates', 
-        type: 'error' 
-      });
-    }
-  }, []);
-
-  // ... rest of your component code remains the same ...
-
-  const handleFileOpen = async (e) => {
-    setIsFileLoading(true);
-    setMessage({ text: '', type: '' });
-    
-    try {
-      const file = e.target.files[0];
-      if (!file) return;
-
-      setFileName(file.name);
-      const reader = new FileReader();
-      
-      reader.onload = (event) => {
-        try {
-          const jsonData = JSON.parse(event.target.result);
-          
-          if (!jsonData.certificates) {
-            throw new Error('Invalid JSON structure. Expected "certificates" array.');
-          }
-
-          setCertificates(jsonData.certificates);
-          setMessage({ text: 'File loaded successfully!', type: 'success' });
-        } catch (error) {
-          console.error('Error parsing file:', error);
-          setMessage({ 
-            text: 'Failed to parse file. Please ensure it is a valid certificates.json file.',
-            type: 'error' 
-          });
-        } finally {
-          setIsFileLoading(false);
-        }
-      };
-
-      reader.onerror = () => {
+    const getCertificates = async () => {
+      setIsLoading(true);
+      try {
+        const data = await getDocs(certificatesCollectionRef);
+        const certificatesData = data.docs.map((doc) => ({
+          ...doc.data(),
+          id: doc.id
+        }));
+        setCertificates(certificatesData);
+        setMessage({ text: 'Certificates loaded successfully!', type: 'success' });
+      } catch (error) {
+        console.error('Error loading certificates:', error);
         setMessage({ 
-          text: 'Error reading file', 
+          text: 'Failed to load certificates', 
           type: 'error' 
         });
-        setIsFileLoading(false);
-      };
+      } finally {
+        setIsLoading(false);
+      }
+    };
 
-      reader.readAsText(file);
-    } catch (error) {
-      console.error('Error opening file:', error);
-      setMessage({ 
-        text: error.message,
-        type: 'error' 
-      });
-      setIsFileLoading(false);
-    }
-  };
-
-  const handleFileSave = () => {
-    setIsFileLoading(true);
-    try {
-      const dataStr = JSON.stringify({ certificates }, null, 2);
-      const dataUri = 'data:application/json;charset=utf-8,' + encodeURIComponent(dataStr);
-      
-      const link = document.createElement('a');
-      link.setAttribute('href', dataUri);
-      link.setAttribute('download', fileName || 'certificates.json');
-      document.body.appendChild(link);
-      link.click();
-      document.body.removeChild(link);
-
-      setMessage({ text: 'File download started!', type: 'success' });
-    } catch (error) {
-      console.error('Error saving file:', error);
-      setMessage({ 
-        text: `Failed to save file: ${error.message}`,
-        type: 'error' 
-      });
-    } finally {
-      setIsFileLoading(false);
-    }
-  };
+    getCertificates();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -118,21 +52,67 @@ function UploadCertificate() {
     }));
   };
 
-  const handleAddCertificate = () => {
+  const handleAddCertificate = async () => {
     if (!newCertificate.title) {
       setMessage({ text: 'Title is required', type: 'error' });
       return;
     }
 
-    setCertificates(prev => [...prev, newCertificate]);
-    setNewCertificate({ title: '', organization: '', link: '' });
-    setMessage({ text: 'Certificate added to list', type: 'success' });
-    setIsEditing(false);
+    setIsLoading(true);
+    try {
+      // Add certificate to Firestore
+      const docRef = await addDoc(certificatesCollectionRef, newCertificate);
+      
+      // Update local state with the new certificate including its ID
+      setCertificates(prev => [...prev, { ...newCertificate, id: docRef.id }]);
+      
+      setMessage({ 
+        text: 'Certificate added successfully!', 
+        type: 'success' 
+      });
+      
+      // Reset form
+      setNewCertificate({ 
+        title: '', 
+        organization: '', 
+        link: '',
+        date: new Date().toISOString().split('T')[0]
+      });
+      setIsEditing(false);
+    } catch (error) {
+      console.error('Error adding certificate:', error);
+      setMessage({ 
+        text: 'Failed to add certificate', 
+        type: 'error' 
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  const handleRemoveCertificate = (index) => {
-    setCertificates(prev => prev.filter((_, i) => i !== index));
-    setMessage({ text: 'Certificate removed', type: 'success' });
+  const handleRemoveCertificate = async (id) => {
+    setIsLoading(true);
+    try {
+      // Delete certificate from Firestore
+      await deleteDoc(doc(db, 'certificates', id));
+      
+      // Update local state
+      const updatedCertificates = certificates.filter(cert => cert.id !== id);
+      setCertificates(updatedCertificates);
+      
+      setMessage({ 
+        text: 'Certificate removed successfully!', 
+        type: 'success' 
+      });
+    } catch (error) {
+      console.error('Error removing certificate:', error);
+      setMessage({ 
+        text: 'Failed to remove certificate', 
+        type: 'error' 
+      });
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   return (
@@ -146,74 +126,17 @@ function UploadCertificate() {
         <div className={`mb-6 p-4 rounded-md ${
           message.type === 'success' 
             ? 'bg-green-100 text-green-700' 
-            : 'bg-red-100 text-red-700'
+            : message.type === 'error'
+            ? 'bg-red-100 text-red-700'
+            : 'bg-blue-100 text-blue-700'
         }`}>
           {message.text}
         </div>
       )}
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        {/* File Operations */}
+        {/* Certificate Management */}
         <div className="space-y-6">
-          <div className="bg-gray-50 p-6 rounded-xl">
-            <h3 className="text-lg font-semibold mb-4 text-gray-700">File Operations</h3>
-            
-            <div className="space-y-4">
-              <label className="block">
-                <span className="sr-only">Choose certificate file</span>
-                <input
-                  type="file"
-                  onChange={handleFileOpen}
-                  accept=".json"
-                  className="hidden"
-                  id="fileInput"
-                />
-                <button
-                  onClick={() => document.getElementById('fileInput').click()}
-                  disabled={isFileLoading}
-                  className={`w-full flex items-center justify-center px-4 py-3 border border-gray-300 rounded-lg ${
-                    isFileLoading
-                      ? 'bg-gray-100 cursor-not-allowed'
-                      : 'bg-white hover:bg-gray-50'
-                  } transition-colors`}
-                >
-                  {isFileLoading ? (
-                    <span className="animate-pulse">Loading...</span>
-                  ) : (
-                    <>
-                      <FiUpload className="mr-2" />
-                      Open certificates.json
-                    </>
-                  )}
-                </button>
-              </label>
-
-              <button
-                onClick={handleFileSave}
-                disabled={certificates.length === 0 || isFileLoading}
-                className={`w-full flex items-center justify-center px-4 py-3 rounded-lg text-white font-medium ${
-                  certificates.length === 0 || isFileLoading
-                    ? 'bg-gray-400 cursor-not-allowed' 
-                    : 'bg-blue-600 hover:bg-blue-700'
-                } transition-colors`}
-              >
-                {isFileLoading ? (
-                  <span className="animate-pulse">Saving...</span>
-                ) : (
-                  <>
-                    <FiDownload className="mr-2" />
-                    Download Certificates
-                  </>
-                )}
-              </button>
-            </div>
-            {fileName && (
-              <p className="mt-2 text-sm text-gray-500 truncate">
-                Current file: {fileName}
-              </p>
-            )}
-          </div>
-
           {/* Add New Certificate Form */}
           <div className="bg-gray-50 p-6 rounded-xl">
             <div className="flex justify-between items-center mb-4">
@@ -221,6 +144,7 @@ function UploadCertificate() {
               <button
                 onClick={() => setIsEditing(!isEditing)}
                 className="p-2 rounded-full bg-blue-100 text-blue-600 hover:bg-blue-200 transition-colors"
+                disabled={isLoading}
               >
                 {isEditing ? <FiX /> : <FiPlus />}
               </button>
@@ -240,6 +164,7 @@ function UploadCertificate() {
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Certificate title"
                     required
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -254,6 +179,7 @@ function UploadCertificate() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="Issuing organization"
+                    disabled={isLoading}
                   />
                 </div>
 
@@ -268,15 +194,31 @@ function UploadCertificate() {
                     onChange={handleInputChange}
                     className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                     placeholder="https://example.com/verify"
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="form-group">
+                  <label className="block text-sm font-medium text-gray-700 mb-1">
+                    Issue Date
+                  </label>
+                  <input
+                    type="date"
+                    name="date"
+                    value={newCertificate.date}
+                    onChange={handleInputChange}
+                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                    disabled={isLoading}
                   />
                 </div>
 
                 <button
                   onClick={handleAddCertificate}
-                  className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors"
+                  disabled={isLoading}
+                  className="w-full flex items-center justify-center px-4 py-3 rounded-lg bg-green-600 text-white hover:bg-green-700 transition-colors disabled:bg-green-400"
                 >
                   <FiPlus className="mr-2" />
-                  Add Certificate
+                  {isLoading ? 'Adding...' : 'Add Certificate'}
                 </button>
               </div>
             )}
@@ -292,17 +234,14 @@ function UploadCertificate() {
           {certificates.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 mb-4">
-                {isFileLoading ? 'Loading certificates...' : 'No certificates loaded'}
-              </p>
-              <p className="text-sm text-gray-400">
-                Load a file or add certificates manually
+                {isLoading ? 'Loading certificates...' : 'No certificates available'}
               </p>
             </div>
           ) : (
             <div className="space-y-3 max-h-[500px] overflow-y-auto pr-2">
-              {certificates.map((cert, index) => (
+              {certificates.map((cert) => (
                 <div 
-                  key={index}
+                  key={cert.id}
                   className="p-4 border border-gray-200 rounded-lg hover:bg-white transition-colors group"
                 >
                   <div className="flex justify-between items-start">
@@ -315,11 +254,17 @@ function UploadCertificate() {
                           {cert.organization}
                         </p>
                       )}
+                      {cert.date && (
+                        <p className="text-xs text-gray-500 mt-1">
+                          Issued: {new Date(cert.date).toLocaleDateString()}
+                        </p>
+                      )}
                     </div>
                     <button
-                      onClick={() => handleRemoveCertificate(index)}
+                      onClick={() => handleRemoveCertificate(cert.id)}
                       className="text-gray-400 hover:text-red-500 p-1 transition-colors"
                       title="Remove certificate"
+                      disabled={isLoading}
                     >
                       <FiX />
                     </button>

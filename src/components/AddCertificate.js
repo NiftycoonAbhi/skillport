@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { db, auth, storage } from '../firebase';
 import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 import { ref, uploadBytes, getDownloadURL } from 'firebase/storage';
-import { FiUpload, FiCalendar, FiAward, FiLink, FiTag, FiSave, FiExternalLink } from 'react-icons/fi';
+import { FiUpload, FiCalendar, FiAward, FiLink, FiTag, FiSave, FiExternalLink, FiSearch } from 'react-icons/fi';
 import { v4 as uuidv4 } from 'uuid';
 
 // Import or define your certificates data
@@ -23,12 +23,28 @@ function AddCertificate() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [message, setMessage] = useState({ text: '', type: '' });
   const [availableCertificates, setAvailableCertificates] = useState([]);
+  const [filteredCertificates, setFilteredCertificates] = useState([]);
   const [selectedCertificate, setSelectedCertificate] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
 
   useEffect(() => {
     // Load available certificates from JSON file
     setAvailableCertificates(certificatesData.certificates);
+    setFilteredCertificates(certificatesData.certificates);
   }, []);
+
+  useEffect(() => {
+    // Filter certificates based on search term
+    if (searchTerm.trim() === '') {
+      setFilteredCertificates(availableCertificates);
+    } else {
+      const filtered = availableCertificates.filter(cert =>
+        cert.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        (cert.organization && cert.organization.toLowerCase().includes(searchTerm.toLowerCase()))
+      );
+      setFilteredCertificates(filtered);
+    }
+  }, [searchTerm, availableCertificates]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -52,6 +68,10 @@ function AddCertificate() {
       organization: cert.organization || '',
       driveURL: cert.link || ''
     }));
+  };
+
+  const handleSearchChange = (e) => {
+    setSearchTerm(e.target.value);
   };
 
   const handleSubmit = async (e) => {
@@ -125,40 +145,64 @@ function AddCertificate() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Available Certificates Section */}
         <div className="lg:col-span-1 bg-gray-50 p-6 rounded-xl">
-          <h3 className="text-lg font-semibold mb-4 text-gray-700 flex items-center">
-            <FiAward className="mr-2" /> Available Certificates
-          </h3>
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold text-gray-700 flex items-center">
+              <FiAward className="mr-2" /> Available Certificates
+            </h3>
+          </div>
+          
+          {/* Search Bar */}
+          <div className="relative mb-4">
+            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+              <FiSearch className="text-gray-400" />
+            </div>
+            <input
+              type="text"
+              value={searchTerm}
+              onChange={handleSearchChange}
+              className="w-full pl-10 pr-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+              placeholder="Search certificates..."
+            />
+          </div>
           
           <div className="space-y-3 max-h-[500px] overflow-y-auto">
-            {availableCertificates.map((cert, index) => (
-              <div 
-                key={index}
-                onClick={() => handleCertificateSelect(cert)}
-                className={`p-4 border rounded-lg cursor-pointer transition-all ${
-                  selectedCertificate?.title === cert.title 
-                    ? 'border-blue-500 bg-blue-50' 
-                    : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
-                }`}
-              >
-                <div className="flex justify-between items-start">
-                  <h4 className="font-medium text-gray-800">{cert.title}</h4>
-                  {cert.link && (
-                    <a 
-                      href={cert.link} 
-                      target="_blank" 
-                      rel="noopener noreferrer"
-                      className="text-blue-600 hover:text-blue-800"
-                      onClick={(e) => e.stopPropagation()}
-                    >
-                      <FiExternalLink size={14} />
-                    </a>
+            {filteredCertificates.length === 0 ? (
+              <div className="text-center py-4 text-gray-500">
+                {searchTerm.trim() === '' 
+                  ? 'No certificates available' 
+                  : 'No certificates match your search'}
+              </div>
+            ) : (
+              filteredCertificates.map((cert, index) => (
+                <div 
+                  key={index}
+                  onClick={() => handleCertificateSelect(cert)}
+                  className={`p-4 border rounded-lg cursor-pointer transition-all ${
+                    selectedCertificate?.title === cert.title 
+                      ? 'border-blue-500 bg-blue-50' 
+                      : 'border-gray-200 hover:border-blue-300 hover:bg-blue-50'
+                  }`}
+                >
+                  <div className="flex justify-between items-start">
+                    <h4 className="font-medium text-gray-800">{cert.title}</h4>
+                    {cert.link && (
+                      <a 
+                        href={cert.link} 
+                        target="_blank" 
+                        rel="noopener noreferrer"
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={(e) => e.stopPropagation()}
+                      >
+                        <FiExternalLink size={14} />
+                      </a>
+                    )}
+                  </div>
+                  {cert.organization && (
+                    <p className="text-sm text-gray-600 mt-1">{cert.organization}</p>
                   )}
                 </div>
-                {cert.organization && (
-                  <p className="text-sm text-gray-600 mt-1">{cert.organization}</p>
-                )}
-              </div>
-            ))}
+              ))
+            )}
           </div>
         </div>
 

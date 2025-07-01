@@ -24,6 +24,81 @@
       "title": "CompTIA Security+",
       "organization": "CompTIA",
       "link": "https://www.comptia.org/certifications/security"
+    },
+    {
+      "title": "AI For Everyone",
+      "organization": "Coursera (by Andrew Ng)",
+      "link": "https://www.coursera.org/learn/ai-for-everyone"
+    },
+    {
+      "title": "Programming for Everybody (Python)",
+      "organization": "University of Michigan (Coursera)",
+      "link": "https://www.coursera.org/learn/python"
+    },
+    {
+      "title": "Introduction to Data Science",
+      "organization": "IBM (Cognitive Class)",
+      "link": "https://cognitiveclass.ai/courses/data-science-hands-open-source-tools-2"
+    },
+    {
+      "title": "Introduction to Web Development",
+      "organization": "UC Davis (Coursera)",
+      "link": "https://www.coursera.org/learn/web-development"
+    },
+    {
+      "title": "AWS Cloud Practitioner Essentials",
+      "organization": "Amazon",
+      "link": "https://www.aws.training/Details/Curriculum?id=20685"
+    },
+    {
+      "title": "Machine Learning Crash Course",
+      "organization": "Google",
+      "link": "https://developers.google.com/machine-learning/crash-course"
+    },
+    {
+      "title": "CS50: Introduction to Computer Science",
+      "organization": "Harvard (edX)",
+      "link": "https://cs50.harvard.edu/x/"
+    },
+    {
+      "title": "Introduction to Cybersecurity",
+      "organization": "Cisco Networking Academy",
+      "link": "https://skillsforall.com/course/introduction-to-cybersecurity"
+    },
+    {
+      "title": "Six Sigma White Belt",
+      "organization": "Aveta Business Institute",
+      "link": "https://www.sixsigmaonline.org/six-sigma-white-belt-training/"
+    },
+    {
+      "title": "Android Development for Beginners",
+      "organization": "Great Learning",
+      "link": "https://www.mygreatlearning.com/academy/learn-for-free/courses/android-app-development"
+    },
+    {
+      "title": "Mechanical Behavior of Materials",
+      "organization": "MIT OpenCourseWare",
+      "link": "https://ocw.mit.edu/courses/materials-science-and-engineering/3-032-mechanical-behavior-of-materials-fall-2008/"
+    },
+    {
+      "title": "Introduction to 5G",
+      "organization": "Telecom Infra Project x IEEE",
+      "link": "https://f5gacademy.telecominfraproject.com/"
+    },
+    {
+      "title": "Introduction to IoT",
+      "organization": "Cisco",
+      "link": "https://skillsforall.com/course/introduction-to-iot"
+    },
+    {
+      "title": "Introduction to Git & GitHub",
+      "organization": "Coursera (Google)",
+      "link": "https://www.coursera.org/learn/introduction-git-github"
+    },
+    {
+      "title": "Frontend Development",
+      "organization": "Meta (Coursera)",
+      "link": "https://www.coursera.org/learn/introduction-to-front-end-development"
     }
   ]
 }
