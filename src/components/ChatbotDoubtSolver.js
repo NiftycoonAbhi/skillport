@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 
-const API_KEY = "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"; // Replace with your actual key
+const API_KEY = "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"; // Replace with your actual key
 
 export default function ChatbotDoubtSolver() {
   const [isOpen, setIsOpen] = useState(false);
