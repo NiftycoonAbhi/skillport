@@ -1,4 +1,3 @@
-// src/components/Sidebar.js
 import React from 'react';
 import { Layout, Menu } from 'antd';
 import {
@@ -6,12 +5,44 @@ import {
   FileTextOutlined,
   BookOutlined,
   MenuFoldOutlined,
-  MenuUnfoldOutlined
+  MenuUnfoldOutlined,
+  TeamOutlined
 } from '@ant-design/icons';
 
 const { Sider } = Layout;
 
+const RESOURCE_TYPES = {
+  USERS: "users",
+  QUESTION_PAPERS: "questionPapers",
+  SUBJECTS: "subjects",
+  JOBS: "jobs",
+};
+
 const Sidebar = ({ activeTab, onChangeTab, collapsed, toggleCollapse }) => {
+  // Define menu items using the new items API
+  const menuItems = [
+    {
+      key: RESOURCE_TYPES.USERS,
+      icon: <UserOutlined />,
+      label: !collapsed ? 'User Management' : null,
+    },
+    {
+      key: RESOURCE_TYPES.SUBJECTS,
+      icon: <BookOutlined />,
+      label: !collapsed ? 'Subject Management' : null,
+    },
+    {
+      key: RESOURCE_TYPES.QUESTION_PAPERS,
+      icon: <FileTextOutlined />,
+      label: !collapsed ? 'Question Papers' : null,
+    },
+    {
+      key: RESOURCE_TYPES.JOBS,
+      icon: <TeamOutlined />,
+      label: !collapsed ? 'Jobs Management' : null,
+    }
+  ];
+
   return (
     <Sider
       collapsible
@@ -34,17 +65,8 @@ const Sidebar = ({ activeTab, onChangeTab, collapsed, toggleCollapse }) => {
         selectedKeys={[activeTab]}
         onClick={(e) => onChangeTab(e.key)}
         style={{ height: '100%', borderRight: 0 }}
-      >
-        <Menu.Item key="users" icon={<UserOutlined />}>
-          {!collapsed && 'Users'}
-        </Menu.Item>
-        <Menu.Item key="subjects" icon={<BookOutlined />}>
-          {!collapsed && 'Subjects'}
-        </Menu.Item>
-        <Menu.Item key="questionPapers" icon={<FileTextOutlined />}>
-          {!collapsed && 'Question Papers'}
-        </Menu.Item>
-      </Menu>
+        items={menuItems} // Using the new items prop instead of children
+      />
     </Sider>
   );
 };

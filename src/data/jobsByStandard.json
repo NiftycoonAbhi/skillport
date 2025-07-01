@@ -1,0 +1,78 @@
+{
+  "10th": {
+    "Government Jobs": [
+      {
+        "title": "SSC 10th Pass Jobs",
+        "description": "Various government jobs available for 10th pass candidates",
+        "link": "https://ssc.nic.in/",
+        "lastDate": "2023-12-31"
+      },
+      {
+        "title": "Railway Group D",
+        "description": "Railway recruitment for 10th pass candidates",
+        "link": "https://indianrailways.gov.in/",
+        "lastDate": "2023-11-30"
+      }
+    ],
+    "Private Jobs": [
+      {
+        "title": "Customer Support Executive",
+        "description": "Entry-level customer support roles",
+        "link": "https://example.com/jobs",
+        "lastDate": "2023-12-15"
+      }
+    ]
+  },
+  "11th": {
+    "Government Jobs": [],
+    "Private Jobs": []
+  },
+  "12th": {
+    "Government Jobs": [
+      {
+        "title": "Indian Army Soldier",
+        "description": "Recruitment for 12th pass candidates",
+        "link": "https://joinindianarmy.nic.in/",
+        "lastDate": "2024-01-15"
+      }
+    ],
+    "Private Jobs": [
+      {
+        "title": "Data Entry Operator",
+        "description": "Entry-level data entry jobs",
+        "link": "https://example.com/jobs",
+        "lastDate": "2023-12-20"
+      }
+    ]
+  },
+  "Engineering": {
+    "Government Jobs": [
+      {
+        "title": "GATE Qualified Jobs",
+        "description": "PSU jobs for GATE qualified engineers",
+        "link": "https://example.com/psu-jobs",
+        "lastDate": "2024-02-28"
+      },
+      {
+        "title": "ISRO Scientist/Engineer",
+        "description": "Engineering positions at ISRO",
+        "link": "https://isro.gov.in/careers",
+        "lastDate": "2024-01-10"
+      }
+    ],
+    "Private Jobs": [
+      {
+        "title": "Software Engineer",
+        "description": "Entry-level software engineering positions",
+        "link": "https://example.com/tech-jobs",
+        "lastDate": "2023-12-31"
+      },
+      {
+        "title": "Mechanical Design Engineer",
+        "description": "Design engineering roles",
+        "link": "https://example.com/mech-jobs",
+        "lastDate": "2024-01-15"
+      }
+    ]
+  }
+}

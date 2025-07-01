@@ -12,7 +12,8 @@ import StudyPlanner from "./StudyPlanner";
 import NoteEditor from "./NoteEditor";
 import NoteList from "./NotesList";
 import QuestionPaperList from "./QuestionPaperList";
-import QuizList from "./QuizList";
+import CareerOpportunities  from "./CareerOpportunities";
+// import QuizList from "./QuizList";
 import {
   FiHome,
   FiPlusCircle,
@@ -149,6 +150,8 @@ useEffect(() => {
         return <NoteEditor />;
       case "noteslist":
         return <NoteList />;
+         case "career-opportunities":
+      return <CareerOpportunities />;
       case "question-papers":
         return <QuestionPaperList openPdf={openPdf} />;
       // case "quiz":
@@ -312,6 +315,20 @@ useEffect(() => {
                     </span>
                   </div>
                 </button>
+                 <button
+                onClick={() => handleNavigation("career-opportunities")}
+                className="group relative flex flex-col items-center justify-center p-5 bg-gradient-to-br from-teal-50 to-white rounded-xl border border-teal-100 hover:border-teal-200 shadow-sm hover:shadow-md transition-all duration-300 hover:scale-[1.02]"
+              >
+                <div className="absolute inset-0 bg-teal-500/5 rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+                <div className="relative z-10 flex flex-col items-center">
+                  <div className="p-3 mb-2 bg-teal-100 rounded-full group-hover:bg-teal-200 transition-colors duration-300">
+                    <FiTrendingUp className="text-teal-600 text-xl group-hover:text-teal-700 transition-colors duration-300" />
+                  </div>
+                  <span className="text-sm font-medium text-gray-700 group-hover:text-gray-900 transition-colors duration-300">
+                    Career Opportunities
+                  </span>
+                </div>
+              </button>
               </div>
             </div>
 
@@ -519,6 +536,27 @@ useEffect(() => {
           )}
         </button> */}
       </div>
+      <div className="pt-4">
+      {(!isSidebarCollapsed || isMobile) && (
+        <p className="text-xs font-semibold text-gray-500 uppercase mb-2 px-3">
+          Career
+        </p>
+      )}
+      <button
+        className={`w-full flex items-center ${
+          activeSection === "career-opportunities"
+            ? "bg-blue-100 text-blue-600"
+            : "text-gray-700 hover:bg-gray-100"
+        } rounded-xl p-3 transition-all`}
+        onClick={() => handleNavigation("career-opportunities")}
+      >
+        <FiTrendingUp className="text-lg" />
+        {(!isSidebarCollapsed || isMobile) && (
+          <span className="ml-3">Career Opportunities</span>
+        )}
+      </button>
+    </div>
+
 
       {(!isSidebarCollapsed || isMobile) && (
         <div className="pt-4 border-t border-gray-200 mt-4">
@@ -555,6 +593,7 @@ useEffect(() => {
           {activeSection === "noteseditor" && "Notes Maker"}
           {activeSection === "noteslist" && "Notes List"}
           {activeSection === "question-papers" && "Question Papers"}
+          {activeSection === "career-opportunities" && "Career Opportunities"}
           {/* {activeSection === "quiz" && "Quizzes"} */}
         </h1>
         <div className="flex items-center space-x-2">
@@ -633,6 +672,7 @@ useEffect(() => {
               {activeSection === "noteseditor" && "Notes Maker"}
               {activeSection === "noteslist" && "My Notes"}
               {activeSection === "question-papers" && "Question Papers"}
+              {activeSection === "career-opportunities" && "Career Opportunities"}
               {/* {activeSection === "quiz" && "Practice Quizzes"} */}
             </h1>
           </div>

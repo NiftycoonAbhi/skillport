@@ -1,4 +1,3 @@
-// src/pages/AdminDashboard.js
 import React, { useCallback, useState } from "react";
 import {
   Layout,
@@ -13,11 +12,18 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { collection, getDocs, query, orderBy, where } from "firebase/firestore";
 import { db } from "../firebase";
+import { 
+  UserOutlined, 
+  FileTextOutlined, 
+  BookOutlined,
+  TeamOutlined // Using TeamOutlined as alternative to BriefcaseOutlined
+} from "@ant-design/icons";
 
 import Sidebar from "../components/Sidebar";
 import UserOverview from "./UserOverview";
 import QuestionPaperUpload from "./QuestionPaperUpload";
 import EditSubjects from "./EditSubjects";
+import AdminJobsManagement from "./AdminJobsManagement";
 
 const { Header, Content } = Layout;
 const { Title, Text } = Typography;
@@ -26,14 +32,42 @@ const RESOURCE_TYPES = {
   USERS: "users",
   QUESTION_PAPERS: "questionPapers",
   SUBJECTS: "subjects",
+  JOBS: "jobs",
 };
+
+const menuItems = [
+  {
+    key: RESOURCE_TYPES.USERS,
+    icon: <UserOutlined />,
+    label: "User Management",
+  },
+  {
+    key: RESOURCE_TYPES.QUESTION_PAPERS,
+    icon: <FileTextOutlined />,
+    label: "Question Papers",
+  },
+  {
+    key: RESOURCE_TYPES.SUBJECTS,
+    icon: <BookOutlined />,
+    label: "Subject Management",
+  },
+  {
+    key: RESOURCE_TYPES.JOBS,
+    icon: <FileTextOutlined />, // Changed to TeamOutlined
+    label: "Jobs Management",
+  },
+];
 
 export default function AdminDashboard() {
   const navigate = useNavigate();
   const { currentUser, isAdmin, loading: authLoading } = useAuth();
 
   const [activeTab, setActiveTab] = useState(RESOURCE_TYPES.USERS);
-  const [loading, setLoading] = useState({ users: true, questionPapers: true });
+  const [loading, setLoading] = useState({ 
+    users: true, 
+    questionPapers: true,
+    jobs: true 
+  });
   const [error, setError] = useState(null);
   const [selectedStandard, setSelectedStandard] = useState(null);
   const [selectedSubject, setSelectedSubject] = useState(null);
@@ -45,10 +79,8 @@ export default function AdminDashboard() {
       try {
         setLoading((prev) => ({ ...prev, [resourceType]: true }));
         let q;
-        if (
-          resourceType === RESOURCE_TYPES.QUESTION_PAPERS &&
-          selectedStandard
-        ) {
+        
+        if (resourceType === RESOURCE_TYPES.QUESTION_PAPERS && selectedStandard) {
           q = query(
             collection(db, resourceType),
             where("standard", "==", selectedStandard),
@@ -145,6 +177,7 @@ export default function AdminDashboard() {
         onChangeTab={setActiveTab}
         collapsed={collapsed}
         toggleCollapse={toggleCollapse}
+        menuItems={menuItems}
       />
 
       <Layout style={{ padding: "0 24px 24px" }}>
@@ -152,15 +185,15 @@ export default function AdminDashboard() {
           <Title level={3} className="m-0">
             Admin Dashboard
           </Title>
-          <Text type="secondary">
-            Manage users, subjects, and question papers
-          </Text>
         </Header>
+        
         <Content style={{ margin: "24px 0", overflowY: "auto" }}>
           {activeTab === RESOURCE_TYPES.USERS && (
             <UserOverview fetchData={fetchData} loading={loading.users} />
           )}
+          
           {activeTab === RESOURCE_TYPES.SUBJECTS && <EditSubjects />}
+          
           {activeTab === RESOURCE_TYPES.QUESTION_PAPERS && (
             <>
               <div className="mb-4">
@@ -171,9 +204,14 @@ export default function AdminDashboard() {
                 />
               </div>
               <Divider />
-              {/* Add your paper list/table here */}
               <Text type="secondary">No question papers to display yet.</Text>
             </>
+          )}
+          
+          {activeTab === RESOURCE_TYPES.JOBS && (
+            <AdminJobsManagement 
+              onSuccess={() => fetchData(RESOURCE_TYPES.JOBS)}
+            />
           )}
         </Content>
       </Layout>

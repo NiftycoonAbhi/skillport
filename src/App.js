@@ -12,6 +12,7 @@ import StudyPlanner from './components/StudyPlanner';
 import NoteEditor from './components/NoteEditor';
 import NotesList from './components/NotesList';
 import AdminDashboard from './pages/AdminDashboard';
+import CareerOpportunities  from "./components/CareerOpportunities";
 import ChatbotDoubtSolver from './components/ChatbotDoubtSolver'; // ✅ Import the chatbot
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/noteseditor" element={<NoteEditor />} />
           <Route path="/noteslist" element={<NotesList />} />
           <Route path="/admin" element={<AdminDashboard />} />
+          <Route path="/career-opportunities" element={<CareerOpportunities />} />
         </Routes>
 
         <ChatbotDoubtSolver /> {/* ✅ Chatbot always visible */}
