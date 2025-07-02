@@ -226,9 +226,9 @@ export default function AdminDashboard() {
             />
           )}
           
-          {activeTab === RESOURCE_TYPES.CERTIFICATES && (
+          {/* {activeTab === RESOURCE_TYPES.CERTIFICATES && (
             <UploadCertificate />
-          )}
+          )} */}
         </Content>
       </Layout>
     </Layout>

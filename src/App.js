@@ -39,7 +39,7 @@ const AppContent = () => {
         <Route path="/career-opportunities" element={<CareerOpportunities />} />
       </Routes>
 
-      {shouldShowChatbot && <ChatbotDoubtSolver />}
+      {/* {shouldShowChatbot && <ChatbotDoubtSolver />} */}
     </>
   );
 };
