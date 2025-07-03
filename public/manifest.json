@@ -9,6 +9,11 @@
   "orientation": "portrait",
   "theme_color": "#2196f3",
   "background_color": "#ffffff",
+  "dir": "ltr",
+  "lang": "en",
+  "categories": ["education", "productivity", "books"],
+  "iarc_rating_id": "eC1a2b3c4d5e6f7g8h", 
+  "prefer_related_applications": false,
   "icons": [
     {
       "src": "icons/logo.png",
@@ -35,5 +40,10 @@
   ],
   "launch_handler": {
     "client_mode": "auto"
-  }
+  },
+  "scope_extensions": [
+    {
+      "origin": "https://jnanasetu.vercel.app"
+    }
+  ]
 }
