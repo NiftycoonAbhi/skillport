@@ -1,5 +1,5 @@
 {
-  "10th": ["Mathematics", "Science", "Social Science", "English", "Hindi"],
+  "10th": ["Mathematics", "Science", "Social Science", "English", "Hindi","Kannada"],
   "11th": {
     "Science": ["Physics", "Chemistry", "Mathematics", "Biology", "Computer Science"],
     "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices"],
@@ -8,7 +8,7 @@
   "12th": {
     "Science": ["Physics", "Chemistry", "Mathematics", "Biology", "Computer Science"],
     "Commerce": ["Accountancy", "Business Studies", "Economics", "Mathematics", "Informatics Practices"],
-    "Arts": ["History", "Political Science", "Geography", "Economics", "Psychology"]
+    "Arts": ["History", "Political Science", "Geography", "English", "Sociology","Kannada"]
   },
 
   "Engineering": {

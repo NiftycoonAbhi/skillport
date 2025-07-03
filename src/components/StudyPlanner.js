@@ -516,7 +516,7 @@ function DashboardStats({ tasks }) {
 }
 
 function PomodoroTimer() {
-  const [minutes, setMinutes] = useState(25);
+  const [minutes, setMinutes] = useState(40);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState('pomodoro');
@@ -551,7 +551,7 @@ function PomodoroTimer() {
 
   useEffect(() => {
     if (mode === 'pomodoro') {
-      setMinutes(25);
+      setMinutes(40);
     } else if (mode === 'shortBreak') {
       setMinutes(5);
     } else if (mode === 'longBreak') {
@@ -568,7 +568,7 @@ function PomodoroTimer() {
   const resetTimer = () => {
     setIsActive(false);
     if (mode === 'pomodoro') {
-      setMinutes(25);
+      setMinutes(40);
     } else if (mode === 'shortBreak') {
       setMinutes(5);
     } else if (mode === 'longBreak') {
@@ -611,7 +611,7 @@ function PomodoroTimer() {
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 mt-2
             ${mode === 'pomodoro' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
         >
-          Pomodoro (25m)
+          Pomodoro (40m)
         </button>
         <button
           onClick={() => setMode('shortBreak')}
@@ -661,11 +661,11 @@ function PomodoroTimer() {
       </div>
 
       <p className="mt-4 text-sm text-gray-600">Pomodoros Completed: {pomodorosCompleted}</p>
-      <p className="text-xs text-gray-500 mt-2">
+      {/* <p className="text-xs text-gray-500 mt-2">
         <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique" target="_blank" rel="noopener noreferrer" className="underline hover:text-blue-600">
           Learn about Pomodoro Technique
         </a>
-      </p>
+      </p> */}
     </div>
   );
 }
@@ -999,7 +999,7 @@ function StudyPlanner() {
             onStartEdit={startEdit}
             onDelete={deleteTask}
             onDragEnd={handleDragEnd}
-            allowDrag={true}
+            allowDrag={false}
           />
 
           <TaskList

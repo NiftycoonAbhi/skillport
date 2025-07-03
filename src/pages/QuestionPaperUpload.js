@@ -525,7 +525,7 @@ function UploadQuestionPaper() {
         </div>
       ) : (
         <div className="text-center py-8">
-          <p className="text-gray-500">No question papers found for this subject.</p>
+          <p className="text-gray-500">We will upload soon.</p>
         </div>
       )}
     </div>

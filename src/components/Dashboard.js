@@ -123,6 +123,12 @@ function Dashboard() {
       alert("Failed to log out. Please try again.");
     }
   };
+  const handleLogout = () => {
+  // Example logout logic
+  localStorage.clear(); // or remove specific tokens
+  window.location.href = "/login"; // redirect to login or home
+};
+
 
   const handleNavigation = (section) => {
     setActiveSection(section);
@@ -691,25 +697,35 @@ function Dashboard() {
           </div>
 
           <div className="flex items-center gap-4">
-            <div className="flex items-center gap-3">
-              {/* Avatar Circle with Initial */}
-              <div
-                className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white text-base font-semibold shadow"
-                title={userName || userEmail || "User"}
-              >
-                {(userEmail || "U").charAt(0).toUpperCase()}
-              </div>
+  <div className="flex items-center gap-3">
+    {/* Avatar Circle with Initial */}
+    <div
+      className="w-10 h-10 rounded-full bg-gradient-to-r from-blue-500 to-blue-600 flex items-center justify-center text-white text-base font-semibold shadow"
+      title={userName || userEmail || "User"}
+    >
+      {(userEmail || "U").charAt(0).toUpperCase()}
+    </div>
 
-              {/* Display name/email if sidebar is expanded */}
-              {!isSidebarCollapsed && (
-                <div className="flex flex-col">
-                  <span className="text-sm font-semibold text-gray-800 truncate max-w-[140px]">
-                    {userName || userEmail || "Unknown User"}
-                  </span>
-                </div>
-              )}
-            </div>
-          </div>
+    {/* Display name/email if sidebar is expanded */}
+    {!isSidebarCollapsed && (
+      <div className="flex flex-col">
+        <span className="text-sm font-semibold text-gray-800 truncate max-w-[140px]">
+          {userName || userEmail || "Unknown User"}
+        </span>
+      </div>
+    )}
+  </div>
+
+  {/* Logout Button */}
+  <button
+    onClick={handleLogout}
+    className="px-3 py-1 text-sm bg-red-500 hover:bg-red-600 text-white rounded shadow transition duration-200"
+    title="Logout"
+  >
+    Logout
+  </button>
+</div>
+
         </div>
 
         {/* Main Content Area */}
