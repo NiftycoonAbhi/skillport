@@ -1,16 +1,9 @@
 import React from 'react';
-import { createRoot } from 'react-dom/client';
+import ReactDOM from 'react-dom';
 import App from './App';
-import '../src/index.css';
-import { AuthProvider } from './contexts/AuthContext';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'; // add this
+import './index.css';
 
-const container = document.getElementById('root');
-const root = createRoot(container);
+ReactDOM.render(<App />, document.getElementById('root'));
 
-root.render(
-  <React.StrictMode>
-    <AuthProvider>  {/* Wrap App with AuthProvider */}
-      <App />
-    </AuthProvider>
-  </React.StrictMode>
-);
+serviceWorkerRegistration.register(); // enable PWA

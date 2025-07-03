@@ -1,0 +1,20 @@
+{
+  "short_name": "Jnanasetu",
+  "name": "Jnanasetu Learning Platform",
+  "icons": [
+    {
+      "src": "icons/logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "icons/logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": ".",
+  "display": "standalone",
+  "theme_color": "#2196f3",
+  "background_color": "#ffffff"
+}
