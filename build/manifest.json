@@ -1,20 +1,49 @@
 {
   "short_name": "Jnanasetu",
   "name": "Jnanasetu Learning Platform",
+  "description": "Jnanasetu is a smart educational platform for learning, certifications, and career guidance.",
+  "id": "/",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "orientation": "portrait",
+  "theme_color": "#2196f3",
+  "background_color": "#ffffff",
+  "dir": "ltr",
+  "lang": "en",
+  "categories": ["education", "productivity", "books"],
+  "iarc_rating_id": "eC1a2b3c4d5e6f7g8h", 
+  "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icons/logo.png",
+      "src": "icons/logo.jpg",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "icons/logo.png",
+      "src": "icons/logo.jog",
       "type": "image/png",
       "sizes": "512x512"
     }
   ],
-  "start_url": ".",
-  "display": "standalone",
-  "theme_color": "#2196f3",
-  "background_color": "#ffffff"
+  "screenshots": [
+    {
+      "src": "screenshots/screen1.png",
+      "sizes": "1080x1920",
+      "type": "image/png"
+    },
+    {
+      "src": "screenshots/screen2.png",
+      "sizes": "1080x1920",
+      "type": "image/png"
+    }
+  ],
+  "launch_handler": {
+    "client_mode": "auto"
+  },
+  "scope_extensions": [
+    {
+      "origin": "https://jnanasetu.vercel.app"
+    }
+  ]
 }
