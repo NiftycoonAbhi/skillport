@@ -124,13 +124,15 @@ export default function AdminDashboard() {
     [selectedStandard]
   );
 
-  if (authLoading) {
-    return (
-      <div className="flex justify-center items-center h-screen">
-        <Spin tip="Authenticating..." size="large" />
-      </div>
-    );
-  }
+ if (authLoading) {
+  return (
+    <div className="flex justify-center items-center h-screen">
+      <Spin tip="Authenticating..." size="large" />
+
+    </div>
+  );
+}
+
 
   if (!currentUser) {
     return (

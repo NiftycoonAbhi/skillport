@@ -1,9 +1,18 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import ReactDOM from 'react-dom/client';
 import App from './App';
-import * as serviceWorkerRegistration from './serviceWorkerRegistration'; // add this
 import './index.css';
+import * as serviceWorkerRegistration from './serviceWorkerRegistration'; // PWA support
+import { AuthProvider } from './contexts/AuthContext'; // ✅ Import your AuthContext
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const container = document.getElementById('root');
+const root = ReactDOM.createRoot(container);
 
-serviceWorkerRegistration.register(); // enable PWA
+root.render(
+  <AuthProvider> {/* ✅ Wrap App with AuthProvider */}
+    <App />
+  </AuthProvider>
+);
+
+// ✅ Enable service worker for PWA functionality
+serviceWorkerRegistration.register();

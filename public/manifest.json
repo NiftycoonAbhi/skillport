@@ -16,12 +16,12 @@
   "prefer_related_applications": false,
   "icons": [
     {
-      "src": "icons/logo.png",
+      "src": "icons/logo.jpg",
       "type": "image/png",
       "sizes": "192x192"
     },
     {
-      "src": "icons/logo.png",
+      "src": "icons/logo.jog",
       "type": "image/png",
       "sizes": "512x512"
     }

@@ -1,98 +1,60 @@
-import { useEffect, useState, createContext, useContext } from 'react';
-import { auth, db } from '../firebase';
-import { onAuthStateChanged } from 'firebase/auth';
-import { doc, onSnapshot } from 'firebase/firestore';
+import React, { useContext, useEffect, useState, createContext } from "react";
+import { onAuthStateChanged } from "firebase/auth";
+import { auth, db } from "../firebase";
+import { doc, onSnapshot } from "firebase/firestore";
+import { Spin } from "antd";
 
-export const AuthContext = createContext({
-  currentUser: null,
-  isAdmin: false,
-  loading: true,
-  error: null,
-  refreshAuth: () => {}
-});
+const AuthContext = createContext();
 
 export function useAuth() {
-  const context = useContext(AuthContext);
-  if (context === undefined) {
-    throw new Error('useAuth must be used within an AuthProvider');
-  }
-  return context;
+  return useContext(AuthContext);
 }
 
 export function AuthProvider({ children }) {
   const [currentUser, setCurrentUser] = useState(null);
   const [isAdmin, setIsAdmin] = useState(false);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
 
   const refreshAuth = async () => {
     if (auth.currentUser) {
-      try {
-        await auth.currentUser.getIdToken(true);
-        const idTokenResult = await auth.currentUser.getIdTokenResult();
-        setIsAdmin(!!idTokenResult.claims.admin);
-      } catch (err) {
-        console.error("Error refreshing auth:", err);
-        setError("Failed to refresh authentication");
-      }
+      await auth.currentUser.getIdToken(true);
     }
   };
 
   useEffect(() => {
-    let unsubscribeUser = () => {};
+    let unsubscribeUserDoc = null;
 
-    const unsubscribeAuth = onAuthStateChanged(
-      auth,
-      async (user) => {
+    const unsubscribe = onAuthStateChanged(auth, async (user) => {
+      setCurrentUser(user);
+
+      if (user) {
         try {
-          setLoading(true);
-          setError(null);
+          const token = await user.getIdTokenResult();
+          const adminClaim = token.claims.admin || false;
+          setIsAdmin(adminClaim);
 
-          if (user) {
-            // Force refresh token to get latest claims
-            const idTokenResult = await user.getIdTokenResult(true);
-            const adminClaim = !!idTokenResult.claims.admin;
-            
-            // Set up Firestore listener for additional admin status
-            unsubscribeUser = onSnapshot(
-              doc(db, 'users', user.uid),
-              (docSnap) => {
-                const userData = docSnap.data();
-                const firestoreAdminStatus = !!userData?.admin;
-                setIsAdmin(adminClaim || firestoreAdminStatus);
-              },
-              (err) => console.error("Firestore user error:", err)
-            );
-
-            setCurrentUser({ 
-              ...user, 
-              isAdmin: adminClaim,
-              uid: user.uid,
-              email: user.email,
-            });
-          } else {
-            setCurrentUser(null);
-            setIsAdmin(false);
-          }
+          // Subscribe to Firestore user document
+          const userDocRef = doc(db, "users", user.uid);
+          unsubscribeUserDoc = onSnapshot(userDocRef, (docSnap) => {
+            const userData = docSnap.data();
+            if (userData?.admin !== undefined) {
+              setIsAdmin(userData.admin);
+            }
+          });
         } catch (err) {
-          console.error("Auth error:", err);
-          setError(err.message);
-          setCurrentUser(null);
+          console.error("Error checking admin claim or Firestore:", err);
           setIsAdmin(false);
-        } finally {
-          setLoading(false);
         }
-      },
-      (err) => {
-        console.error("Auth observer error:", err);
-        setError(err.message);
-        setLoading(false);
+      } else {
+        setIsAdmin(false);
       }
-    );
+
+      setLoading(false); // ✅ Always called after user is handled
+    });
 
     return () => {
-      unsubscribeAuth();
-      unsubscribeUser();
+      unsubscribe();
+      if (unsubscribeUserDoc) unsubscribeUserDoc();
     };
   }, []);
 
@@ -100,13 +62,20 @@ export function AuthProvider({ children }) {
     currentUser,
     isAdmin,
     loading,
-    error,
-    refreshAuth
+    refreshAuth,
   };
 
   return (
     <AuthContext.Provider value={value}>
-      {!loading && children}
+      {loading ? (
+        <div className="flex justify-center items-center h-screen">
+          <Spin tip="Authenticating..." size="large">
+            <div className="h-32 w-32" />
+          </Spin>
+        </div>
+      ) : (
+        children
+      )}
     </AuthContext.Provider>
   );
 }
