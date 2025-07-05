@@ -354,7 +354,7 @@ function AddCertificate() {
                   />
                 </div>
 
-                <div className="form-group">
+                {/* <div className="form-group">
                   <label htmlFor="certificateFile" className="block text-sm font-medium text-gray-700 mb-1 flex items-center">
                     <FiUpload className="mr-2 text-gray-500" /> Certificate File (PDF, PNG, JPG - Optional)
                   </label>
@@ -366,7 +366,7 @@ function AddCertificate() {
                     accept=".pdf,.png,.jpg,.jpeg"
                   />
                   {file && <p className="mt-2 text-sm text-gray-500">Selected file: <span className="font-medium text-gray-700">{file.name}</span></p>}
-                </div>
+                </div> */}
 
                 <div className="pt-4 flex justify-end">
                   <button
