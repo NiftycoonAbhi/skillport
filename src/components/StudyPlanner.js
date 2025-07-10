@@ -516,7 +516,7 @@ function DashboardStats({ tasks }) {
 }
 
 function PomodoroTimer() {
-  const [minutes, setMinutes] = useState(40);
+  const [minutes, setMinutes] = useState(25);
   const [seconds, setSeconds] = useState(0);
   const [isActive, setIsActive] = useState(false);
   const [mode, setMode] = useState('pomodoro');
@@ -551,7 +551,7 @@ function PomodoroTimer() {
 
   useEffect(() => {
     if (mode === 'pomodoro') {
-      setMinutes(40);
+      setMinutes(25);
     } else if (mode === 'shortBreak') {
       setMinutes(5);
     } else if (mode === 'longBreak') {
@@ -568,7 +568,7 @@ function PomodoroTimer() {
   const resetTimer = () => {
     setIsActive(false);
     if (mode === 'pomodoro') {
-      setMinutes(40);
+      setMinutes(25);
     } else if (mode === 'shortBreak') {
       setMinutes(5);
     } else if (mode === 'longBreak') {
@@ -611,7 +611,7 @@ function PomodoroTimer() {
           className={`px-4 py-2 rounded-md text-sm font-medium transition-colors duration-200 mt-2
             ${mode === 'pomodoro' ? 'bg-blue-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-gray-300'}`}
         >
-          Pomodoro (40m)
+          Pomodoro (25m)
         </button>
         <button
           onClick={() => setMode('shortBreak')}

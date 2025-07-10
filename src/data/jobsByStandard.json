@@ -12,6 +12,12 @@
         "description": "Railway recruitment for 10th pass candidates",
         "link": "https://indianrailways.gov.in/",
         "lastDate": "2023-11-30"
+      },
+      {
+        "title": "Post Office GDS",
+        "description": "India Post recruitment for Gramin Dak Sevak",
+        "link": "https://indiapostgdsonline.gov.in/",
+        "lastDate": "2024-01-20"
       }
     ],
     "Private Jobs": [
@@ -20,12 +26,32 @@
         "description": "Entry-level customer support roles",
         "link": "https://example.com/jobs",
         "lastDate": "2023-12-15"
+      },
+      {
+        "title": "Delivery Executive",
+        "description": "Jobs with delivery companies like Swiggy, Zomato",
+        "link": "https://example.com/delivery-jobs",
+        "lastDate": "2024-01-05"
       }
     ]
   },
   "11th": {
-    "Government Jobs": [],
-    "Private Jobs": []
+    "Government Jobs": [
+      {
+        "title": "Apprenticeship in Railways",
+        "description": "Railway apprenticeship opportunities for 11th pass",
+        "link": "https://rrcnr.org/",
+        "lastDate": "2024-01-30"
+      }
+    ],
+    "Private Jobs": [
+      {
+        "title": "Retail Sales Associate",
+        "description": "Sales job at retail outlets and stores",
+        "link": "https://example.com/retail-jobs",
+        "lastDate": "2023-12-25"
+      }
+    ]
   },
   "12th": {
     "Government Jobs": [
@@ -34,6 +60,12 @@
         "description": "Recruitment for 12th pass candidates",
         "link": "https://joinindianarmy.nic.in/",
         "lastDate": "2024-01-15"
+      },
+      {
+        "title": "Police Constable",
+        "description": "State-wise police constable recruitment",
+        "link": "https://example.com/police-jobs",
+        "lastDate": "2024-01-10"
       }
     ],
     "Private Jobs": [
@@ -42,6 +74,12 @@
         "description": "Entry-level data entry jobs",
         "link": "https://example.com/jobs",
         "lastDate": "2023-12-20"
+      },
+      {
+        "title": "Call Center Executive",
+        "description": "12th pass candidates can apply for voice support roles",
+        "link": "https://example.com/callcenter-jobs",
+        "lastDate": "2024-01-10"
       }
     ]
   },
@@ -58,21 +96,75 @@
         "description": "Engineering positions at ISRO",
         "link": "https://isro.gov.in/careers",
         "lastDate": "2024-01-10"
+      },
+      {
+        "title": "DRDO Scientist B",
+        "description": "Recruitment in DRDO for engineers",
+        "link": "https://rac.gov.in/",
+        "lastDate": "2024-02-15"
       }
     ],
     "Private Jobs": [
       {
-        "title": "Software Engineer",
-        "description": "Entry-level software engineering positions",
-        "link": "https://example.com/tech-jobs",
-        "lastDate": "2023-12-31"
-      },
-      {
-        "title": "Mechanical Design Engineer",
-        "description": "Design engineering roles",
-        "link": "https://example.com/mech-jobs",
-        "lastDate": "2024-01-15"
-      }
+      "title": "Civil Site Engineer – Naukri.com",
+      "description": "12737+ job openings across India",
+      "link": "https://www.naukri.com/civil-site-engineer-jobs",
+      "lastDate": "Varies – continuously updated"
+    },
+    {
+      "title": "Civil Site Engineer – Indeed India",
+      "description": "6031+ openings (includes onsite & remote)",
+      "link": "https://in.indeed.com/q-civil-site-engineer-jobs.html",
+      "lastDate": "Varies – continuously updated"
+    },
+    {
+      "title": "Site Engineer – Indeed Bengaluru",
+      "description": "3000+ local openings in Bengaluru",
+      "link": "https://in.indeed.com/q-site-engineer-l-bengaluru%2C-karnataka-jobs.html",
+      "lastDate": "Varies"
+    },
+    {
+      "title": "Civil Site Engineer – LinkedIn India",
+      "description": "603+ jobs in Bengaluru",
+      "link": "https://in.linkedin.com/jobs/civil-site-engineer-jobs-bengaluru",
+      "lastDate": "Varies"
+    },
+    {
+      "title": "Site Engineer – LinkedIn India",
+      "description": "3000+ Site Engineer roles across India",
+      "link": "https://in.linkedin.com/jobs/site-engineer-jobs",
+      "lastDate": "Varies"
+    },
+    {
+      "title": "Civil Engineering Jobs – Monster India",
+      "description": "Multiple civil site and project engineer roles",
+      "link": "https://www.monster.com/jobs/q-civil-engineering-jobs",
+      "lastDate": "Varies"
+    },
+    {
+      "title": "Civil Engineer Jobs – Indeed India",
+      "description": "4000+ civil engineer listings (site/industrial/etc.)",
+      "link": "https://in.indeed.com/q-civil-engineer-jobs.html",
+      "lastDate": "Varies"
+    },
+    {
+      "title": "Civil Engineering Jobs – Naukri Bengaluru",
+      "description": "Site/civil engineer openings in Bengaluru",
+      "link": "https://www.naukri.com/civil-engineering-jobs-in-bangalore",
+      "lastDate": "Varies"
+    },
+    {
+      "title": "Civil Engineer Jobs – Glassdoor India",
+      "description": "4124+ openings across India",
+      "link": "https://www.glassdoor.co.in/Job/india-civil-engineer-jobs",
+      "lastDate": "Varies"
+    },
+    {
+      "title": "Civil Engineer Jobs – Foundit.in",
+      "description": "281+ active vacancies in India",
+      "link": "https://www.foundit.in/search/civil-engineer-jobs",
+      "lastDate": "Varies"
+    }
     ]
   }
 }
